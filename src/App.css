@@ -1,0 +1,120 @@
+/* Blog Css */
+
+* {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  box-sizing: border-box;
+}
+body {
+  margin: 0px;
+  padding: 0px 15px 0px 15px;
+}
+header {
+  background-color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+div.MuiButtonBase-root {
+  background-color: #dbecff;
+}
+div.MuiButtonBase-root:hover {
+  background-color: #c3e2ff;
+}
+ul {
+  padding: 0px;
+  margin: 0px;
+}
+li {
+  display: inline-block;
+  padding: 5px 10px 5px 10px;
+}
+.NavLink {
+  font-weight: bold;
+
+}
+li.navBorder {
+  font-weight: bold;
+  padding-left: 1px;
+  padding-right: 1px;
+}
+a:hover {
+  color: #135F9D;
+}
+a {
+  color:#000;
+}
+li.rightLi {
+  float: right;
+}
+.mainColumn {
+  float: left;
+  width: 80%;
+  padding: 10px;
+}
+.sideColumn {
+  float: left;
+  width: 20%;
+  padding: 10px;
+}
+
+.postSection {
+  border: 2px solid black;
+  min-height: 165px;
+  min-width: 165px;
+  padding: 5px;
+  margin-bottom: 10px;
+
+}
+hr.divider {
+  border-top: 1px solid black;
+}
+img.postImage {
+  float: right;
+  height: 150px;
+  width: 150px;
+  margin-left: 5px;
+  top: 0;
+}
+.material-icons.md-35 { font-size: 35px;  color: darkblue;}
+
+footer {
+  text-align: center;
+  font-style: italic;
+  display: inline-block;
+  margin-top: 20px;
+  width: 100%;
+}
+h1 {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+}
+.postTitle {
+  display: inline;
+  font-weight: bold;
+  font-size: 18px;
+}
+.postContent {
+  height: 100%;
+  text-align: justify;
+  min-height: 131px;
+
+  margin: 0px;
+}
+
+.postFooter {
+  text-align: justify;
+  margin-top: inherit;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-style: italic;
+
+}
+@media (max-width: 1000px) {
+  .mainColumn, .sideColumn {
+    width: 100%;
+    height: auto;
+
+  }
+}
