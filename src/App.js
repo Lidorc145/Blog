@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
+    BrowserRouter,
     Redirect,
     Switch,
     Route
@@ -15,46 +15,68 @@ import NewPost from "./Pages/Posts/NewPost";
 import PostPageView from "./Pages/Posts/PostPageView";
 import Login from "./Pages/Login/Login";
 import {AppBar, Toolbar} from '@material-ui/core';
+import axios from "axios";
 
 class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state ={
+        this.state = {
+            id: null,
             username: null,
+            full_name:null,
+            type: null,
+            logged: false
         };
-        this.onLogin = this.onLogin.bind(this)
-    }
-    onLogin(props){
-        this.setState({username: props});
+        this.parentSetState = this.parentSetState.bind(this);
+        this.sessionCheck();
     }
 
+    parentSetState(jsonState) {
+        this.setState(jsonState);
+    }
 
-    render(){
-        console.log('user is:' +this.state.username);
+    async sessionCheck(){
+        let url = "sessionCheck/";
+        await axios.post(url)
+            .then((res) => {
+                this.setState(res.data);
+                this.setState({logged: true});
+            })
+            .catch((err) => {
+                console.log("Error Session: "+err);
+                this.setState({id:null, username:null, full_name:null,type:null});
+                this.setState({logged: false});
+            });
+    }
 
+// <Login parentSetState={this.parentSetState} appState={this.state}/>
+    render(props) {
+        console.log({s: this.state});
         return (
-            <div className="App" >
-                <Router>
+            <div className="App">
+                    <BrowserRouter>
                     <header>
-                        <AppBar color="transparent">
-                            <Toolbar>
-                                <NavBar username={this.state.username} />
+                        <AppBar style={{background: "#ffffff"}}>
+                            <Toolbar variant="dense">
+                                <NavBar username={this.state.username}  appState={this.state} />
                             </Toolbar>
                         </AppBar>
-                        <Toolbar id="back-to-top-anchor" />
+                        <Toolbar id="back-to-top-anchor"/>
+
 
                     </header>
                     <Switch>
                         <Route path="/AboutMe" component={AboutMe}/>
-                        <Route path="/Post/:id" component={PostPageView} />
-                        <Route path="/NewPost" component={NewPost} />
-                        <Route path="/Login"><Login onLogin={this.onLogin} /></Route>
-                        <Route path="/Home" component={Home} />
-                        <Redirect from="/" to="/Home" />
+                        <Route path="/Post/:id" component={PostPageView}/>
+                        <Route path="/NewPost" render={(props) => <NewPost parentSetState={this.parentSetState} {...props} {...this.state} isAuthenticated={true}/>}/>
+                        <Route path="/Login" render={(props) => <Login parentSetState={this.parentSetState} {...props} {...this.state} isAuthenticated={true}/>}/>
+                        <Route path="/Home" component={Home}/>
+                        <Redirect from="/" to="/Home"/>
                     </Switch>
-                </Router>
-                <Footer />
+                </BrowserRouter>
+
+                <Footer/>
             </div>
         );
     }

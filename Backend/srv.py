@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, make_response
+from flask import Flask, request, abort, make_response, jsonify
 import mysql.connector as mysql
 import json
 import html
@@ -6,12 +6,14 @@ import datetime
 import bcrypt
 import uuid
 import os
+from flask import render_template
 
 db = mysql.connect(
-	host = "localhost",
-	user = "root",
-	passwd = os.environ['dbPassword'],
+	host = "",
+	user = "admin",
+	passwd = "",
 	database = "myblog")
+
 
 #######################################################################################
 # How to use this REST API:
@@ -54,14 +56,18 @@ db = mysql.connect(
 
 app = Flask(__name__,
 	static_folder='../build',
-	static_url_path='/')
+	static_url_path='')
 
 #######################################
 # Routes:
 #######################################
 @app.route('/')
 def index():
-	return app.send_static_file('index.html')
+    return app.send_static_file('index.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return app.send_static_file('index.html')
 
 @app.route('/users/<attribute>/<value>', methods=['GET', 'POST'])
 @app.route('/users/', methods=['GET', 'POST'])
@@ -86,7 +92,7 @@ def auther(attribute=None, value=None):
 	if request.method == 'GET':
 		return getAuther(value)
 
-@app.route('/login/', methods=['POST'])
+@app.route('/logging/', methods=['POST'])
 def login():
 	if request.method == 'POST':
 		return loginCheck()
@@ -95,12 +101,6 @@ def login():
 def sessions():
 	if request.method == 'POST':
 		return sessionCheck()
-
-@app.route('/<path:path>')
-def catch_all(path):
-    return 'Invalid argument! %s' % path, 404
-
-
 
 #######################################
 # Functions:
@@ -181,9 +181,9 @@ def getQuery(query, values, header):
 
 def loginCheck():
 	data = request.get_json()
-	if 'username' in data:
+	if 'username' in data and 'password' in data:
 		print(data)
-		query = "select id, full_name, password from users WHERE username = %s"
+		query = "select id, full_name, password, type from users WHERE username = %s"
 		values = (data['username'],)
 		cursor = db.cursor()
 		print(query)
@@ -196,6 +196,7 @@ def loginCheck():
 		userID=record[0]
 		fullName=record[1]
 		hashedPwd=record[2].encode('utf-8')
+		type=record[3]
 
 		if bcrypt.hashpw(data['password'].encode('utf-8'), hashedPwd) != hashedPwd:
 			abort(401)
@@ -204,18 +205,19 @@ def loginCheck():
 		query = "insert into sessions (user_id, session_id) values (%s, %s) on duplicate key update session_id = %s"
 		print(sessionID)
 		values = (userID, sessionID, sessionID)
-		print("~~~~~~~~~~~~~~~")
+
 		cursor.execute(query, values)
 
 		db.commit()
 		cursor.close()
-		print({'full_name': fullName })
-		resp = make_response({'full_name': fullName })
+		print(jsonify({'id': userID, 'full_name': fullName, 'username': data['username'], 'type': type }))
+		resp = make_response(jsonify({'id': userID, 'full_name': fullName, 'username': data['username'], 'type': type }))
 		resp.set_cookie("sessionID", sessionID)
 		return resp
 	abort(400)
 
 def sessionCheck():
+	print(request.cookies['sessionID'])
 	if 'sessionID' in request.cookies:
 		sessionID=request.cookies['sessionID']
 		query = "select user_id from sessions where session_id = %s"
@@ -247,5 +249,4 @@ def permissionCheck(type):
 	abort(403)
 
 if __name__ == "__main__":
-	app.debug = True
-	app.run(host='0.0.0.0', port=5000)
+	app.run(host='0.0.0.0', debug=True)
