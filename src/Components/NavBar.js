@@ -64,7 +64,7 @@ function NavBar(props) {
                 props.parentSetState({alert: true, alertType: 'success', alertData: "You are logged out.", logged: false});
             })
             .catch((err) => {
-                props.parentSetState({alert: true, alertType: 'error', alertData: ("Error login"+err)});
+                props.parentSetState({alert: true, alertType: 'error', alertData: ("Error login"+err),logged: false});
             });
     }
 

@@ -107,7 +107,7 @@ class NewPost extends React.Component {
     }
 
     render() {
-     if(!PermissionCheck(this.props.type, "admin")){
+     if(!this.props.logged || !PermissionCheck(this.props.type, "admin")){
          return (<Redirect to='/Login'/> );
      }else{
          return (
