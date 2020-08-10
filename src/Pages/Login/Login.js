@@ -1,13 +1,15 @@
 import React from 'react';
 import axios from "axios";
+import Typography from "@material-ui/core/Typography";
+import Toolbar from "@material-ui/core/Toolbar";
 
-class Login extends React.Component {
-    handleSubmit = (event) => {
+function Login(props){
+    const handleSubmit = (event) => {
         event.preventDefault()
-        let username=event.target.username.value;
-        let password=event.target.password.value;
-        if(username!=null && password!=null){
-            let url = "logging/";
+        let username = event.target.username.value;
+        let password = event.target.password.value;
+        if (username != null && password != null) {
+            let url = "../logging/";
             let data = {
                 username: username,
                 password: password
@@ -15,52 +17,56 @@ class Login extends React.Component {
             axios.post(url, data)
                 .then((res) => {
                     console.log(res.data);
-                    this.props.parentSetState(JSON.parse(JSON.stringify(res.data)));
-                    this.props.parentSetState({logged: true});
-                    this.props.history.goBack();
+                    props.parentSetState(JSON.parse(JSON.stringify(res.data)));
+                    props.parentSetState({logged: true, dialog: false});
+                    props.parentSetState({ alertType: "success",
+                        alertData: "Success: You are connected to the system.",
+                        alert: true});
 
                 })
                 .catch((err) => {
-                    console.error("Error login"+err);
+                    console.error("Error login" + err);
+                    props.parentSetState({ alertType: "error",
+                        alertData: "Error: "+err,
+                        alert: true});
                 });
         }
     }
 
-    render(props) {
-        if(!this.props.logged){
-            return (
-                <form onSubmit={this.handleSubmit}>
-                    {console.log(this.history)}
-                    <div className="form-group" align="center">
-                        <div className="form-group  col-md-6">
-                            <label htmlFor="inputEmail3" className="col-sm-2 col-form-label"><h1>Login</h1>Demo
-                                User:<br/>Username: demo<br/>Password: demo</label>
-                        </div>
-                        <div className="form-group  col-md-6">
-                            <div className="col-sm-10">
-                                <input type="username" name="username" className="form-control" id="inputEmail3"
+    if (!props.logged) {
+        return (
+                <form onSubmit={handleSubmit}>
+                        <div className="form-group" align="center">
+                            <Typography variant="h2" noWrap>LOGIN</Typography>
+                            <div className="form-group">
+                                <b>Demo
+                                    User:</b><br/>Username: demo | Password: demo
+                            </div>
+                            <div className="form-group ">
+                                <input type="username" name="username" className="form-control"
+                                       id="inputEmail3"
                                        placeholder="Username"/>
                             </div>
-                        </div>
-                        <div className="form-group col-md-6">
-                            <div className="col-sm-10">
-                                <input type="password" name="password" className="form-control" id="inputPassword3"
+                            <div className="form-group">
+                                <input type="password" name="password" className="form-control"
+                                       id="inputPassword3"
                                        placeholder="Password"/>
                             </div>
                         </div>
-                        <div className="form-group col-md-6">
-                            <div className="col-sm-10">
-                                <button type="submit" className="btn btn-primary">Sign in
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <Toolbar >
+                        <button type="button" className="btn btn-primary">REGISTER
+                        </button>
+                        <div />
+                        <button type="submit" className="btn btn-primary">SIGN IN
+                        </button>
+                    </Toolbar>
                 </form>
-            );
-        }
-        //this.props.history.goBack();
-        console.log(this.props);
-        return ("Already Connected!");
+        );
     }
+    //this.props.history.goBack();
+    console.log(props);
+
+    return ("Already Connected!");
 }
+
 export default Login;

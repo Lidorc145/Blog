@@ -14,8 +14,12 @@ import AboutMe from './Pages/AboutMe/AboutMe';
 import NewPost from "./Pages/Posts/NewPost";
 import PostPageView from "./Pages/Posts/PostPageView";
 import Login from "./Pages/Login/Login";
-import {AppBar, Toolbar} from '@material-ui/core';
+import {AppBar, Snackbar, Toolbar} from '@material-ui/core';
 import axios from "axios";
+import Alert from "@material-ui/lab/Alert";
+import DialogSlideUP from "./Components/DialogSlideUP";
+
+
 
 class App extends React.Component {
 
@@ -26,7 +30,17 @@ class App extends React.Component {
             username: null,
             full_name:null,
             type: null,
-            logged: false
+            logged: false,
+            alert: null,
+            alertType: null,
+            alertData: null,
+            dialog: false,
+            dialogContext: "akakakak",
+            page: {
+                name: 'Home',
+                num: 1
+            },
+            parentSetState: this.parentSetState.bind(this)
         };
         this.parentSetState = this.parentSetState.bind(this);
         this.sessionCheck();
@@ -37,30 +51,35 @@ class App extends React.Component {
     }
 
     async sessionCheck(){
-        let url = "sessionCheck/";
+        let url = "./sessionCheck/";
         await axios.post(url)
             .then((res) => {
                 this.setState(res.data);
                 this.setState({logged: true});
             })
             .catch((err) => {
-                console.log("Error Session: "+err);
+                console.error("Error Session: "+err);
                 this.setState({id:null, username:null, full_name:null,type:null});
                 this.setState({logged: false});
             });
     }
 
-// <Login parentSetState={this.parentSetState} appState={this.state}/>
+    handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({alert: false});
+    };
+
     render(props) {
-        console.log({s: this.state});
+        console.log(this.state);
         return (
             <div className="App">
                     <BrowserRouter>
                     <header>
                         <AppBar style={{background: "#ffffff"}}>
-                            <Toolbar variant="dense">
-                                <NavBar username={this.state.username}  appState={this.state} />
-                            </Toolbar>
+                            <NavBar {...this.state}/>
                         </AppBar>
                         <Toolbar id="back-to-top-anchor"/>
 
@@ -69,17 +88,47 @@ class App extends React.Component {
                     <Switch>
                         <Route path="/AboutMe" component={AboutMe}/>
                         <Route path="/Post/:id" component={PostPageView}/>
-                        <Route path="/NewPost" render={(props) => <NewPost parentSetState={this.parentSetState} {...props} {...this.state} isAuthenticated={true}/>}/>
-                        <Route path="/Login" render={(props) => <Login parentSetState={this.parentSetState} {...props} {...this.state} isAuthenticated={true}/>}/>
-                        <Route path="/Home" component={Home}/>
+                        <Route path="/NewPost" render={() => <NewPost {...props} {...this.state} isAuthenticated={true}/>}/>
+                        <Route path="/Login" render={() => <Login  {...this.state} isAuthenticated={true}/>}/>
+                        <Route path="/Home" render={() => <Home {...this.state} />} />
                         <Redirect from="/" to="/Home"/>
                     </Switch>
                 </BrowserRouter>
-
+                <Snackbar open={this.state.alert} onClose={this.handleAlertClose} autoHideDuration={3000}>
+                    <Alert severity={this.state.alertType} elevation={6}
+                           variant="filled">{this.state.alertData}</Alert>
+                </Snackbar>
+                <DialogSlideUP open={this.state.dialog} {...this.state}  parentSetState={this.parentSetState} dialof={this.state.dialog} dialogContent={<Login {...this.state}  parentSetState={this.parentSetState}/>} />
                 <Footer/>
             </div>
         );
     }
+
+     handleSubmit = (event) => {
+        event.preventDefault()
+        let username = event.target.username.value;
+        let password = event.target.password.value;
+        if (username != null && password != null) {
+            let url = "logging/";
+            let data = {
+                username: username,
+                password: password
+            };
+            axios.post(url, data)
+                .then((res) => {
+                    console.log(res.data);
+                    this.props.parentSetState(JSON.parse(JSON.stringify(res.data)));
+                    this.props.parentSetState({logged: true});
+                    this.props.history.goBack();
+
+                })
+                .catch((err) => {
+                    console.error("Error login" + err);
+                });
+        }
+    }
+
+
 }
 
 

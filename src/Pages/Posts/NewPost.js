@@ -26,7 +26,7 @@ class NewPost extends React.Component {
             image: "",
             publish_date: null,
             tags: [],
-            axiosResponse: null,
+            alertType: null,
             response: null,
             alert: false,
             clicked: false
@@ -81,9 +81,6 @@ class NewPost extends React.Component {
             axios.post(url, data)
                 .then(() => {
                     this.setState({
-                        axiosResponse: "success",
-                        response: "Success: The post added successfully!",
-                        alert: true,
                         title: "",
                         summary: "",
                         content: "",
@@ -92,12 +89,15 @@ class NewPost extends React.Component {
                         tags: [],
                         clicked: false
                     });
+                    this.props.parentSetState({ alertType: "success",
+                        alertData: "Success: The post added successfully!",
+                        alert: true});
 
                 })
                 .catch((err) => {
-                    this.setState({
-                        axiosResponse: "error",
-                        response: "" + err,
+                    this.props.parentSetState({
+                        alertType: "error",
+                        alertData: " " + err,
                         alert: true
                     });
                 });
@@ -106,28 +106,13 @@ class NewPost extends React.Component {
         }
     }
 
-
-    handleAlertClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        this.setState({alert: false});
-    };
-
     render() {
      if(!PermissionCheck(this.props.type, "admin")){
          return (<Redirect to='/Login'/> );
      }else{
          return (
              <Card>
-
                  <CardContent>
-
-                     <Snackbar open={this.state.alert} onClose={this.handleAlertClose} autoHideDuration={3000}>
-                         <Alert severity={this.state.axiosResponse} elevation={6}
-                                variant="filled">{this.state.response}</Alert>
-                     </Snackbar>
                      <Typography variant="h4">
                          <i className="material-icons md-35">create</i>
                          New Post

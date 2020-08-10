@@ -1,26 +1,23 @@
 /* Blog Css */
 
 * {
-  font-family: "Comic Sans MS", cursive, sans-serif;
+ font-family: "Tahoma", cursive, sans-serif;
   box-sizing: border-box;
 }
 body {
+  background-color: #e5e5e5;
   margin: 0px;
   padding: 0px 15px 0px 15px;
 }
 header {
-  background-color: white;
   position: sticky;
   top: 0;
   z-index: 1;
 }
+header.MuiAppBar-colorPrimary {
+  background-color: #24283c;
+}
 
-div.MuiButtonBase-root {
-  background-color: #dbecff;
-}
-div.MuiButtonBase-root:hover {
-  background-color: #c3e2ff;
-}
 ul {
   padding: 0px;
   margin: 0px;
@@ -29,17 +26,30 @@ li {
   display: inline-block;
   padding: 5px 10px 5px 10px;
 }
+.inactive {
+  color: #fff;
+  text-decoration: none;
+}
+
+.active {
+  color: rgba(255, 13, 112, 0.54);
+  text-decoration: none;
+}
 .NavLink {
   font-weight: bold;
-
+  Background-color: #2fbbe5;
+  color: yellow;
 }
 li.navBorder {
   font-weight: bold;
   padding-left: 1px;
   padding-right: 1px;
 }
+button{
+  padding: 3px;
+}
 a:hover {
-  color: #135F9D;
+  color: #6ea7de;
 }
 a {
   color:#000;

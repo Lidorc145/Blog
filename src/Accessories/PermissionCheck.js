@@ -1,8 +1,6 @@
 
 function PermissionCheck(userType, type) {
-    if(userType === type || userType === "admin")
-        return true;
-    return false;
+    return userType === type || userType === "admin";
 }
 
 export default PermissionCheck;
