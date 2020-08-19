@@ -3,7 +3,6 @@ import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 
 function Footer() {
-
     return(
         <footer>
             <Typography variant="body2" color="textSecondary" align="center">

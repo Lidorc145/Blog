@@ -16,10 +16,11 @@ export default class Home extends React.Component {
         this.pageCountCheck();
     }
 
-     pageCountCheck() {
-         axios.get('posts/page/').then(res => {
-            console.log(res.data[0]);
-            this.setState({pageCount: Math.ceil(res.data[0]/10)});
+
+    pageCountCheck() {
+        axios.get(`../posts/page/`).then(res => {
+            //console.log(res.data[0]);
+            this.setState({pageCount: Math.ceil(res.data[0] / 10)});
         }).catch((err) => {
             this.props.parentSetState({
                 alertType: "error",
@@ -32,34 +33,31 @@ export default class Home extends React.Component {
 
     render(props) {
         return (
-            <div>
-                <Container>
-                    <article className="mainColumn">
-                        <PostsList {...this.props} />
-                        <Pagination count={this.state.pageCount} boundaryCount={this.state.pageCount} variant="outlined" color="primary" onChange={
-                            (e, p) => {
-                                this.props.parentSetState({
-                                    page: {
+            <Container>
+                <article className="mainColumn">
+                    <PostsList {...this.props} {...props} />
+                    <Pagination count={this.state.pageCount} defaultPage={this.props.page.num}
+                                boundaryCount={this.state.pageCount} variant="outlined" color="primary" onChange={
+                        (e, p) => {
+                            this.props.parentSetState({
+                                page: {
 
-                                        num: p
-                                    }
-                                })
-                            }}/>
-                    </article>
-                    <aside className="sideColumn">
-                        <Card>
-                            <CardFooter>
-                                <Popular/>
-                            </CardFooter>
-                            <CardFooter>
-                                <Latest/>
-                            </CardFooter>
-
-                        </Card>
-
-                    </aside>
-                </Container>
-            </div>
+                                    num: p
+                                }
+                            })
+                        }}/>
+                </article>
+                <aside className="sideColumn">
+                    <Card>
+                        <CardFooter>
+                            <Popular/>
+                        </CardFooter>
+                        <CardFooter>
+                            <Latest/>
+                        </CardFooter>
+                    </Card>
+                </aside>
+            </Container>
         );
     }
 }

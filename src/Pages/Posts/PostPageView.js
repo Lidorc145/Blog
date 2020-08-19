@@ -49,7 +49,8 @@ class PostPageView extends React.Component {
             postData: null
         };
         this.getDataFromdb();
-
+        console.log(this);
+        console.log(props);
     }
 
     async getDataFromdb() {
@@ -75,6 +76,7 @@ class PostPageView extends React.Component {
 
 function ShowTagsList(props)
 {
+    console.log(props);
     const classes = useStyles();
 
     const handleClick = () => {

@@ -31,6 +31,9 @@ class NewPost extends React.Component {
             alert: false,
             clicked: false
         };
+        console.log(this);
+        console.log(props);
+        console.log("~~~");
     }
 
     handleAddChip(chip) {
@@ -108,7 +111,11 @@ class NewPost extends React.Component {
 
     render() {
      if(!this.props.logged || !PermissionCheck(this.props.type, "admin")){
-         return (<Redirect to='/Login'/> );
+         this.props.parentSetState({dialog: true,
+             alert: true,
+             alertType: "error",
+             alertData: "No permission! please connect first.",});
+         return (<Redirect to='/'/> );
      }else{
          return (
              <Card>

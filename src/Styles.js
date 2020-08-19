@@ -14,20 +14,37 @@ function Styles() {
                 main: "#8d2525",
             },
         },
+        MuiToolbar: {
+            regular: {
+                backgroundColor: "#ffff00",
+                color: "#000000",
+                height: "32px",
+                minHeight: "32px",
+                '@media (min-width: 600px)': {
+                    minHeight: "48px"
+                }
+            },
+        },
+        mediaa: {
+            height: 0,
+            width: '100%',
+            paddingTop: '56.25%', // 16:9
+        },
     });
     const useStyles = makeStyles((theme) => ({
         root: {
             backgroundColor: theme.palette.background.paper,
-            width: 500,
+
         },
         grow: {
             flexGrow: 1,
         },
         menuButton: {
+            display: 'none',
             marginRight: theme.spacing(2),
         },
         title: {
-            display: 'none',
+
             [theme.breakpoints.up('sm')]: {
                 display: 'block',
             },
@@ -69,18 +86,58 @@ function Styles() {
                 width: '20ch',
             },
         },
-        sectionDesktop: {
-            display: 'none',
-            [theme.breakpoints.up('md')]: {
-                display: 'flex',
-            },
+        toolbar: {
+
+            width: '100%',
+            alignContent: 'center',
+            textAlign: 'center',
         },
-        sectionMobile: {
+        toolbarMobile: {
+            display: 'table',
+            width: '100%',
+            alignContent: 'center',
+            textAlign: 'center',
+        },
+        flex:{
             display: 'flex',
-            [theme.breakpoints.up('md')]: {
-                display: 'none',
-            },
+            width: '100%',
+            alignContent: 'center',
+            textAlign: 'center',
         },
+        fab: {
+            margin: theme.spacing(2),
+        },
+        absolute: {
+            position: 'absolute',
+            bottom: theme.spacing(2),
+            right: theme.spacing(3),
+        },
+        mediaa: {
+            height: 0,
+            width: '100%',
+            paddingTop: '56.25%', // 16:9
+        },
+        LoginButtons: {
+            root: {
+                background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                borderRadius: 3,
+                border: 0,
+                color: 'white',
+                height: 48,
+                padding: '0 30px',
+                boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+            },
+            color: "black",
+            margin: "5px",
+
+            alignSelf: "center",
+            alignItems: "center",
+            alignContent: "center"
+        },
+        Forms: {
+            textAlign: "center",
+            padding: "10px"
+        }
     }));
     return useStyles;
 }

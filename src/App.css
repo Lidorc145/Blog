@@ -1,13 +1,14 @@
 /* Blog Css */
 
 * {
- font-family: "Tahoma", cursive, sans-serif;
+  font-family: Tahoma,Verdana,Segoe,sans-serif;
   box-sizing: border-box;
 }
 body {
+  flex: 1;
   background-color: #e5e5e5;
   margin: 0px;
-  padding: 0px 15px 0px 15px;
+  padding: 0px 0px 0px 0px;
 }
 header {
   position: sticky;
@@ -47,6 +48,7 @@ li.navBorder {
 }
 button{
   padding: 3px;
+
 }
 a:hover {
   color: #6ea7de;
@@ -60,7 +62,7 @@ li.rightLi {
 .mainColumn {
   float: left;
   width: 80%;
-  padding: 10px;
+  padding: 0px;
 }
 .sideColumn {
   float: left;
@@ -87,6 +89,12 @@ img.postImage {
   top: 0;
 }
 .material-icons.md-35 { font-size: 35px;  color: darkblue;}
+
+#wide{
+  display: inline;
+  width: 100%;
+  align-content: center;
+}
 
 footer {
   text-align: center;
@@ -121,10 +129,47 @@ h1 {
   font-style: italic;
 
 }
-@media (max-width: 1000px) {
+.MuiAppBar-positionFixed {
+  position: unset !important;
+}
+
+#switchMenu{
+  position: absolute;
+  right: 15px;
+  bottom: -15px;
+  z-index:1;
+}
+
+
+.form-group{
+  padding: 5px;
+}
+
+.form-input{
+  margin-bottom: 3px;
+}
+
+.MuiTypography-alignCenter{
+  align-content: center;
+  align-items: center;
+  margin: 10px;
+}
+.makeStyles-sectionDesktop-200{
+  display: grid;
+}
+.MuiCardContent-root{
+  display: block;
+}
+.MuiToolbar-root {
+  display: grid;
+}
+@media (max-width: 600px) {
   .mainColumn, .sideColumn {
     width: 100%;
     height: auto;
 
+  }
+  .makeStyles-title-44 {
+    display: unset;
   }
 }

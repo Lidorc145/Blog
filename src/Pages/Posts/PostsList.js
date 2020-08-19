@@ -22,8 +22,9 @@ class Posts extends React.Component {
         }
     }
 
-    async getDataFromdb() {
-        await axios.get("../posts/page/"+this.props.page.num).then(res => {
+    getDataFromdb() {
+        console.log("ddd");
+        axios.get("../posts/page/"+this.props.page.num).then(res => {
             this.setState({postsData: res.data, page: this.props.page.num});
             console.log(res.data);
         })
@@ -32,7 +33,7 @@ class Posts extends React.Component {
     render() {
         if (this.state.postsData.length != null) {
             return this.state.postsData.map((item, key) => (
-                <PostListView key={this.state.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
+                <PostListView{...this.state} {...this.props} key={this.state.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
                               postPreviewText={item.summary} postImage={item.image} postAuther={item.auther_name}
                               postPublishedTime={item.publish_date}/>
             ));
