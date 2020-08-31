@@ -68,9 +68,9 @@ function Login (props) {
                        id="password"
                        placeholder="Password"/>
 
-                <Button className={classes.LoginButtons}  type="button" onClick={(p) => routeChange('/Register')}
+                <Button className={classes.LoginButtons}  type="button" onClick={(p) => routeChange('/SignUp')}
                         size="large" color="secondary" variant="contained">
-                    REGISTER
+                    SIGN UP
                 </Button>
                 <Button className={classes.LoginButtons} type="submit" size="large" variant="contained"
                         color="primary">

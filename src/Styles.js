@@ -137,6 +137,9 @@ function Styles() {
         Forms: {
             textAlign: "center",
             padding: "10px"
+        },
+        zIndex: {
+            zIndex: 1
         }
     }));
     return useStyles;

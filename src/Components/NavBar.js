@@ -21,6 +21,7 @@ import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import axios from "axios";
 import Link from "@material-ui/core/Link";
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Button from "@material-ui/core/Button";
 import {
     BrowserView,
@@ -246,7 +247,11 @@ function NavBar(props) {
         </div>) : (<div>
                 <IconButton color="inherit"
                             onClick={() => props.parentSetState({dialog: true})}>
-                    <MeetingRoomIcon/>LOGIN</IconButton></div>
+                    <MeetingRoomIcon/>LOGIN</IconButton>
+                <IconButton color="inherit"
+                            onClick={() => props.history.push("../SignUp")}>
+                    <PersonAddIcon/> SIGN UP</IconButton>
+                </div>
         )}</div>);
     }
 }

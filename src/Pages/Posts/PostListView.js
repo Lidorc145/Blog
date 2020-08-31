@@ -14,6 +14,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CardHeader from "@material-ui/core/CardHeader";
 import {BrowserView,MobileView} from "react-device-detect";
+import Fab from "@material-ui/core/Fab";
 
 
 class PostListView extends React.Component {
@@ -35,7 +36,7 @@ class PostListView extends React.Component {
             return (
 
 
-                <MediaControlCard {...this.state} {...this.props} alignItems="strech" title={this.state.postTitle}
+                <MediaControlCard history={this.props.history} {...this.state} {...this.props} alignItems="strech" title={this.state.postTitle}
                                   summary={this.state.postPreviewText} image={this.state.postImage}
                                   publishDate={this.state.postPublishedTime} auther={this.state.postAuther}/>
 
@@ -80,13 +81,9 @@ function MediaControlCard(props) {
     let moreButtonPressed = false;
     const checkButtonPressed = (event) => {
         if (event.target.tagName === "svg" || event.target.tagName === "BUTTON" || event.target.tagName === "path") {
-            props.parentSetState({
-                alert: true,
-                alertType: 'info',
-                alertData: 'More button pressed on post ID: ' + props.postID
-            });
+            alert("soon");
         } else {
-            props.parentSetState({page: {alertData: 'postView', id: props.postID}});
+            props.history.push("Post/"+props.postID);
         }
     }
 
@@ -94,7 +91,9 @@ function MediaControlCard(props) {
         <CardActions className={classes.root}>
             <CardActionArea onClick={checkButtonPressed}>
                 <MobileView>
-                <Card>
+                <Card><IconButton color="primary" aria-label="add to shopping cart">
+                    <ShareIcon/>
+                </IconButton>
                         <CardMedia
                             className={classes.media}
                             image={props.image}
@@ -107,7 +106,7 @@ function MediaControlCard(props) {
                                     <MoreVertIcon/>
                                 </IconButton>
                             }
-                            title={<Link to={'Post/' + props.postID}>{props.title}</Link>}
+                            title={props.title}
                             subheader={"Published " + (PublishDateCalc({date: props.publishDate})) + " by " + props.auther}
 
                         />
@@ -128,14 +127,14 @@ function MediaControlCard(props) {
                 </MobileView>
                     <BrowserView>
                         <Card className={classes.root}>
-                        <div >
+                        <div>
                             <CardHeader
                                 action={
-                                    <IconButton id="more" aria-label="settings" onClick={checkButtonPressed}>
+                                    <IconButton className={classes.zIndex}  id="more" aria-label="settings" onClick={checkButtonPressed}>
                                         <MoreVertIcon/>
                                     </IconButton>
                                 }
-                                title={<Link to={'Post/' + props.postID}>{props.title}</Link>}
+                                title={props.title}
                                 subheader={"Published " + (PublishDateCalc({date: props.publishDate})) + " by " + props.auther}
 
                             />
@@ -145,10 +144,10 @@ function MediaControlCard(props) {
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
-                                <IconButton aria-label="add to favorites">
+                                <IconButton className={classes.zIndex}  color="">
                                     <FavoriteIcon/>
                                 </IconButton>
-                                <IconButton aria-label="share">
+                                <IconButton className={classes.zIndex} color="">
                                     <ShareIcon/>
                                 </IconButton>
                             </CardActions>

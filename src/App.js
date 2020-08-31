@@ -7,7 +7,7 @@ import Home from './Pages/Home/Home';
 import AboutMe from './Pages/AboutMe/AboutMe';
 import NewPost from "./Pages/Posts/NewPost";
 import PostPageView from "./Pages/Posts/PostPageView";
-import Register from "./Pages/Login/Register";
+import SignUp from "./Pages/Login/SignUp";
 import {AppBar, Snackbar} from '@material-ui/core';
 import axios from "axios";
 import Alert from "@material-ui/lab/Alert";
@@ -28,12 +28,13 @@ class App extends React.Component {
             alertType: null,
             alertData: null,
             dialog: false,
-            dialogContext: "akakakak",
+            dialogContext: "dialogContext",
             page: {
                 name: 'Home',
                 num: 1
             },
             parentSetState: this.parentSetState.bind(this),
+            sessionCheck: this.sessionCheck.bind(this),
             data: null,
             sessionID: null
         };
@@ -43,6 +44,7 @@ class App extends React.Component {
         }
         this.parentSetState = this.parentSetState.bind(this);
         //;
+        console.log(this.state.sessionID);
         if(this.state.sessionID===null) {
             this.sessionCheck();
         }
@@ -64,16 +66,17 @@ class App extends React.Component {
         });
     }
 
-    sessionCheck(){
+    async sessionCheck(){
         if(Cookies.get('sessionID')!=null) {
             let url = "./sessionCheck/";
-            axios.post(url)
+            await axios.post(url)
                 .then((res) => {
-                    this.setState({logged: true, sessionID: Cookies.get('sessionID') } + res.data);
+                    this.setState({logged: true, sessionID: Cookies.get('sessionID') });
+                    this.setState(res.data);
                 })
                 .catch((err) => {
                     console.error("Error Session: " + err);
-                    this.setState({sessionID: false, id: null, username: null, full_name: null, type: null, logged: false});
+                    this.setState({sessionID: null, id: null, username: null, full_name: null, type: null, logged: false});
                 });
         }
     }
@@ -104,8 +107,8 @@ class App extends React.Component {
                             <Route path="/NewPost" component={(props) => <NewPost {...props} {...this.state}
                                                                                   isAuthenticated={true}/>}/>
                             <Route path="/Home" component={(props) => <Home {...props} {...this.state} />}/>
-                            <Route path="/Register" render={(props) => <Register {...props} {...this.state} />}/>
-                            <Redirect exact from="/" to="/Home"/>
+                            <Route path="/SignUp" render={(props) => <SignUp {...props} {...this.state} />}/>
+                            <Route component={()=>(<Redirect from="/" to="/Home"/>)} />
                         </Switch>
                     </div>
                     <Snackbar open={this.state.alert} onClose={this.handleAlertClose} autoHideDuration={3000}>

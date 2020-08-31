@@ -62,9 +62,10 @@
     "react-transition-group": "^4.4.1",
     "reactstrap": "^8.5.1",
     "typescript": "^3.9.7",
-    "webpack": "4.42.0"
+    "webpack": "4.42.0",
+    "yup": "^0.29.3"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "http://ec2-100-25-137-135.compute-1.amazonaws.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

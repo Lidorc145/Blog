@@ -11,29 +11,24 @@ class Posts extends React.Component {
             numOfPosts: 10,
             page: this.props.page.num
         };
-        this.getDataFromdb();
     }
 
-    componentDidUpdate(prevProps) {
-        console.log(prevProps.page.num);
-        if(this.props.page.num!=prevProps.page.num) // Check if it's a new user, you can also use some unique property, like the ID  (this.props.user.id !== prevProps.user.id)
-        {
+    componentDidUpdate(prevProps, prevState, snapshot) {
             this.getDataFromdb();
-        }
     }
 
     getDataFromdb() {
-        console.log("ddd");
-        axios.get("../posts/page/"+this.props.page.num).then(res => {
-            this.setState({postsData: res.data, page: this.props.page.num});
-            console.log(res.data);
-        })
+        if(this.state.postsData.length==0) {
+            axios.get("../posts/page/" + this.state.page).then(res => {
+                this.setState({postsData: res.data, page: this.state.page});
+            })
+        }
     }
 
     render() {
         if (this.state.postsData.length != null) {
             return this.state.postsData.map((item, key) => (
-                <PostListView{...this.state} {...this.props} key={this.state.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
+                <PostListView {...this.state} {...this.props} key={this.state.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
                               postPreviewText={item.summary} postImage={item.image} postAuther={item.auther_name}
                               postPublishedTime={item.publish_date}/>
             ));
