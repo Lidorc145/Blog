@@ -15,7 +15,19 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CardHeader from "@material-ui/core/CardHeader";
 import {BrowserView,MobileView} from "react-device-detect";
 import Fab from "@material-ui/core/Fab";
-
+import Button from "@material-ui/core/Button";
+import Avatar from "@material-ui/core/Avatar";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
+import FacebookIcon from '@material-ui/icons/Facebook';
+import TwitterIcon from '@material-ui/icons/Twitter';
+import EmailIcon from '@material-ui/icons/Email';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 
 class PostListView extends React.Component {
     constructor(props) {
@@ -44,21 +56,36 @@ class PostListView extends React.Component {
             );
         }
         return null;
-
     }
 }
 
 const useStyles = makeStyles((theme) => ({
     root: {
+
+        width: '100%'
+    },
+    MobileCardsRoot: {
+        marginTop: '10px',
+        marginBottom: '10px',
+        width: '100%'
+    },
+    BrowserCardsRoot: {
+        marginTop: '10px',
+        marginBottom: '10px',
         display: 'flex',
         width: '100%'
     },
     container: {
         display: 'flex',
     },
-
+    details: {
+        display: "flex",
+        flexDirection: "column"
+    },
     cover: {
-        width: 350,
+        maxWidth: "35%",
+        minWidth: "35%",
+        width: "35%",
         left: 0
     },
     controls: {
@@ -68,103 +95,154 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: theme.spacing(1),
     },
     media: {
-        height: 0,
-
+        height: 150,
         paddingTop: '56.25%', // 16:9
     },
-
 }));
 
 
 function MediaControlCard(props) {
     const classes = useStyles();
-    let moreButtonPressed = false;
-    const checkButtonPressed = (event) => {
-        if (event.target.tagName === "svg" || event.target.tagName === "BUTTON" || event.target.tagName === "path") {
-            alert("soon");
-        } else {
-            props.history.push("Post/"+props.postID);
-        }
-    }
+    const [openShare, setOpenShare] = React.useState(false);
 
+    const handleClickOpenShare = () => {
+        setOpenShare(true);
+    };
+
+    const handleCloseShare = (value) => {
+        setOpenShare(false);
+    };
     return (
-        <CardActions className={classes.root}>
-            <CardActionArea onClick={checkButtonPressed}>
-                <MobileView>
-                <Card><IconButton color="primary" aria-label="add to shopping cart">
-                    <ShareIcon/>
-                </IconButton>
+        <div>
+            <MobileView>
+                <Card className={classes.MobileCardsRoot}>
+                    <CardActionArea onClick={()=>{props.history.push("./Post/"+props.postID)}}>
                         <CardMedia
                             className={classes.media}
                             image={props.image}
                             title={props.title}
                         />
-
                         <CardHeader
-                            action={
-                                <IconButton id="more" aria-label="settings" onClick={checkButtonPressed}>
-                                    <MoreVertIcon/>
-                                </IconButton>
-                            }
                             title={props.title}
                             subheader={"Published " + (PublishDateCalc({date: props.publishDate})) + " by " + props.auther}
-
                         />
-                        <CardContent className={classes.content}>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                {renderHTML(props.summary)}
-                            </Typography>
+                        <CardContent>
+                           {props.summary}
                         </CardContent>
-                        <CardActions disableSpacing>
-                            <IconButton aria-label="add to favorites">
-                                <FavoriteIcon/>
-                            </IconButton>
-                            <IconButton aria-label="share">
-                                <ShareIcon/>
-                            </IconButton>
-                        </CardActions>
+                    </CardActionArea>
+                    <CardActions>
+                        <Button size="small" color="primary" onClick={() => { props.history.push("./Post/"+props.postID) }}>
+                            Read More
+                        </Button>
+                        <Button size="small" color="primary" onClick={handleClickOpenShare}>
+                            Share
+                        </Button>
+                        <Button size="small" color="primary" onClick={() => {  props.history.push("./Edit/Post/"+props.postID)  }}>
+                            Edit
+                        </Button>
+                    </CardActions>
                 </Card>
-                </MobileView>
-                    <BrowserView>
-                        <Card className={classes.root}>
-                        <div>
+            </MobileView>
+                <BrowserView>
+                    <Card className={classes.BrowserCardsRoot}>
+                        <div className={classes.details}>
+                        <CardActionArea onClick={()=>{props.history.push("./Post/"+props.postID)}}>
+
                             <CardHeader
-                                action={
-                                    <IconButton className={classes.zIndex}  id="more" aria-label="settings" onClick={checkButtonPressed}>
-                                        <MoreVertIcon/>
-                                    </IconButton>
-                                }
                                 title={props.title}
                                 subheader={"Published " + (PublishDateCalc({date: props.publishDate})) + " by " + props.auther}
-
                             />
-                            <CardContent className={classes.content}>
-                                <Typography variant="subtitle1" color="textSecondary " >
-                                    {renderHTML(props.summary)}
-                                </Typography>
+                            <CardContent>
+                                {props.summary}
                             </CardContent>
-                            <CardActions disableSpacing>
-                                <IconButton className={classes.zIndex}  color="">
-                                    <FavoriteIcon/>
-                                </IconButton>
-                                <IconButton className={classes.zIndex} color="">
-                                    <ShareIcon/>
-                                </IconButton>
-                            </CardActions>
+
+                        </CardActionArea>
+                        <CardActions>
+                            <Button size="small" color="primary" onClick={() => { props.history.push("./Post/"+props.postID) }}>
+                                Read More
+                            </Button>
+                            <Button size="small" color="primary"  onClick={handleClickOpenShare}>
+                                Share
+                            </Button>
+                            <Button size="small" color="primary" onClick={() => {  props.history.push("./Edit/Post/"+props.postID)  }}>
+                                Edit
+                            </Button>
+                        </CardActions>
                         </div>
                         <CardMedia
                             className={classes.cover}
                             image={props.image}
                             title={props.title}
+                            onClick={()=>{props.history.push("./Post/"+props.postID)}}
                         />
-                        </Card>
-                    </BrowserView>
-
-            </CardActionArea>
-
-        </CardActions>
+                    </Card>
+                </BrowserView>
+            <ShareDialog open={openShare} onClose={handleCloseShare} />
+        </div>
     );
 }
+
+function ShareDialog(props) {
+    const classes = useStyles();
+    const { onClose, selectedValue, open } = props;
+
+    const handleClose = () => {
+        onClose(selectedValue);
+    };
+
+    const handleListItemClick = (value) => {
+        onClose(value);
+    };
+
+    return (
+        <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+            <DialogTitle id="simple-dialog-title">Share</DialogTitle>
+            <List>
+                <ListItem autoFocus button onClick={handleClose}>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <AssignmentIcon/>
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Copy to clipboard" />
+                </ListItem>
+                <ListItem autoFocus button onClick={handleClose}>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <EmailIcon/>
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Email" />
+                </ListItem>
+                <ListItem autoFocus button onClick={handleClose}>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <FacebookIcon/>
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Facebook" />
+                </ListItem>
+                <ListItem autoFocus button onClick={handleClose}>
+                    <ListItemAvatar>
+                        <Avatar>
+
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Google+" />
+                </ListItem>
+                <ListItem autoFocus button onClick={handleClose}>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <TwitterIcon/>
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Twitter" />
+                </ListItem>
+            </List>
+        </Dialog>
+    );
+}
+
 
 
 export default PostListView;
