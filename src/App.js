@@ -12,6 +12,10 @@ import {AppBar, Snackbar} from '@material-ui/core';
 import axios from "axios";
 import Alert from "@material-ui/lab/Alert";
 import Cookies from 'js-cookie';
+import {textAlign} from "@material-ui/system";
+import Grid from "@material-ui/core/Grid";
+
+
 
 class App extends React.Component {
 
@@ -89,8 +93,9 @@ class App extends React.Component {
     };
 
     render(props) {
+
         return (
-            <div className="App">
+            <div>
                 <BrowserRouter>
                     <div>
                         <header>
@@ -101,10 +106,12 @@ class App extends React.Component {
                         </header>
                     </div>
                     <div id="wide">
-                        <Switch>
+                         <Switch>
                             <Route path="/AboutMe" component={AboutMe}/>
                             <Route path="/Post/:id" component={PostPageView}/>
                             <Route path="/NewPost" component={(props) => <NewPost {...props} {...this.state}
+                                                                                  isAuthenticated={true}/>}/>
+                            <Route path="/Edit/Post/:id" component={(props) => <NewPost {...props} {...this.state}
                                                                                   isAuthenticated={true}/>}/>
                             <Route path="/Home" component={(props) => <Home {...props} {...this.state} />}/>
                             <Route path="/SignUp" render={(props) => <SignUp {...props} {...this.state} />}/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import renderHTML from 'react-render-html';
 import {Container, Chip, Card, CardMedia} from '@material-ui/core';
 import axios from "axios";
@@ -8,6 +8,7 @@ import CardBody from "reactstrap/es/CardBody";
 import Typography from "@material-ui/core/Typography";
 import CardContent from "@material-ui/core/CardContent";
 import CardFooter from "reactstrap/es/CardFooter";
+
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
 
@@ -58,69 +59,66 @@ class PostPageView extends React.Component {
     }
 
     render() {
-        if(this.state.postData != null) {
-                let postData = this.state.postData[0];
-                return (
-                    <Container justify="center">
-                        <MediaControlCard {...postData} />
-                    </Container>
-                );
+        if (this.state.postData != null) {
+            let postData = this.state.postData[0];
+            return (
+                <Container justify="center">
+                    <MediaControlCard {...postData} />
+                </Container>
+            );
         }
         return null;
     }
 }
 
 
-
-function ShowTagsList(props)
-{
+function ShowTagsList(props) {
     const classes = useStyles();
 
     const handleClick = () => {
         console.info('You clicked the Chip.');
     };
 
-    let listTags =(entities.decode(props.value));
-    let tags = (JSON.parse(listTags)).map( tagName => (
-        <Chip key={tagName.toString()} variant="outlined" onClick={handleClick} color="primary" label={tagName} />
+    let listTags = (entities.decode(props.value));
+    let tags = (JSON.parse(listTags)).map(tagName => (
+        <Chip key={tagName.toString()} variant="outlined" onClick={handleClick} color="primary" label={tagName}/>
     ));
 
     return (<div className={classes.root}>{tags}</div>);
 }
 
 
-
 function MediaControlCard(props) {
     const classes = useStyles();
 
     return (
-                <Card className={classes.root}>
+        <Card className={classes.root}>
 
-                    <div className={classes.details}>
+            <div className={classes.details}>
 
-                        <CardBody> <Typography component="h5" variant="h5">
-                            {props.title}
+                <CardBody> <Typography component="h5" variant="h5">
+                    {props.title}
+                </Typography>
+                    <CardContent className={classes.content}>
+
+                        <Typography variant="subtitle1" color="textSecondary">
+                            {renderHTML(props.summary)}
                         </Typography>
-                            <CardContent className={classes.content}>
+                        <ShowTagsList value={props.tags_list}/>
+                    </CardContent>
+                    {renderHTML(entities.decode(props.content))}
+                </CardBody>
+                <CardFooter>
+                    Published <PublishDateCalc date={props.publish_date}/> by {props.auther_name}
+                </CardFooter>
+            </div>
+            <CardMedia
+                className={classes.cover}
+                image={props.image}
+                title={props.title}
+            />
 
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    {renderHTML(props.summary)}
-                                </Typography>
-                                <ShowTagsList value={props.tags_list} />
-                            </CardContent>
-                            {renderHTML(entities.decode(props.content))}
-                        </CardBody>
-                        <CardFooter >
-                            Published <PublishDateCalc date={props.publish_date}/> by {props.auther_name}
-                        </CardFooter>
-                    </div>
-                    <CardMedia
-                        className={classes.cover}
-                        image={props.image}
-                        title={props.title}
-                    />
-
-                </Card>
+        </Card>
     );
 }
 

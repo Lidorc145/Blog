@@ -14,12 +14,20 @@ import {
 import axios from 'axios';
 import moment from "moment";
 import PermissionCheck from "../../Accessories/PermissionCheck";
-
+import ReactHtmlParser from 'react-html-parser';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Fade from "@material-ui/core/Fade";
+import Modal from "@material-ui/core/Modal";
+import Backdrop from "@material-ui/core/Backdrop";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 class NewPost extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            editPostID: props.match.params.id,
+            dataRecived: false,
+            auther_id: "",
             title: "",
             summary: "",
             content: "",
@@ -31,9 +39,28 @@ class NewPost extends React.Component {
             alert: false,
             clicked: false
         };
-        console.log(this);
-        console.log(props);
-        console.log("~~~");
+        this.getPostData().then(this.setState({dataRecived: true}));
+        console.log(this.state);
+    }
+
+    async getPostData() {
+        if (this.state.editPostID != undefined) {
+            await (axios.get(window.location.origin + '/posts/id/' + this.state.editPostID).then(res => {
+                console.log("auther:" + res.data[0].auther_id);
+                if (res.data.length == 1) {
+                    this.setState({
+                        dataRecived: true,
+                        title: res.data[0].title,
+                        summary: res.data[0].summary,
+                        content: ReactHtmlParser(res.data[0].content)[0],
+                        auther_id: res.data[0].auther_id,
+                        image: res.data[0].image,
+                        publish_date: res.data[0].publish_date,
+                        tags: JSON.parse(res.data[0].tags_list.replace(/&quot;/g, '"'))
+                    });
+                }
+            }));
+        }
     }
 
     handleAddChip(chip) {
@@ -68,7 +95,6 @@ class NewPost extends React.Component {
         if (s.title && s.summary && s.content && s.image && s.publish_date) {
             const url = "posts/";
 
-
             var data = {
                 title: this.state.title,
                 summary: this.state.summary,
@@ -79,7 +105,6 @@ class NewPost extends React.Component {
                 publish_date: this.state.publish_date,
                 tags_list: JSON.stringify(this.state.tags)
             };
-
 
             axios.post(url, data)
                 .then(() => {
@@ -92,10 +117,11 @@ class NewPost extends React.Component {
                         tags: [],
                         clicked: false
                     });
-                    this.props.parentSetState({ alertType: "success",
+                    this.props.parentSetState({
+                        alertType: "success",
                         alertData: "Success: The post added successfully!",
-                        alert: true});
-
+                        alert: true
+                    });
                 })
                 .catch((err) => {
                     this.props.parentSetState({
@@ -105,143 +131,209 @@ class NewPost extends React.Component {
                     });
                 });
         } else {
+            /*this.props.parentSetState({
+                alertType: "error",
+                alertData: "Invalid values.",
+                alert: true
+            });*/
+        }
+    }
 
+    updatePost = () => {
+        this.setState({clicked: true});
+        let s = this.state;
+        if (s.title && s.summary && s.content && s.image && s.publish_date) {
+            const url = "posts/";
+
+            var data = {
+                title: this.state.title,
+                summary: this.state.summary,
+                content: this.state.content,
+                image: this.state.image,
+                auther_id: this.props.id,
+                last_update_date: this.state.publish_date,
+                publish_date: this.state.publish_date,
+                tags_list: JSON.stringify(this.state.tags)
+            };
+
+            axios.post(url, data)
+                .then(() => {
+                    this.setState({
+                        clicked: false
+                    });
+                    this.props.parentSetState({
+                        alertType: "success",
+                        alertData: "Success: The post updated successfully!",
+                        alert: true
+                    });
+                })
+                .catch((err) => {
+                    this.props.parentSetState({
+                        alertType: "error",
+                        alertData: " " + err,
+                        alert: true
+                    });
+                });
+        } else {
+            this.props.parentSetState({
+                alertType: "error",
+                alertData: "Invalid values.",
+                alert: true
+            });
         }
     }
 
     render() {
-     if(!this.props.logged || !PermissionCheck(this.props.type, "admin")){
-         this.props.parentSetState({dialog: true,
-             alert: true,
-             alertType: "error",
-             alertData: "No permission! please connect first.",});
-         return (<Redirect to='/'/> );
-     }else{
-         return (
-             <Card>
-                 <CardContent>
-                     <Typography variant="h4">
-                         <i className="material-icons md-35">create</i>
-                         New Post
-                     </Typography>
-                     <TextField
-                         error={this.state.clicked && !this.state.title}
-                         helperText={this.state.clicked && !this.state.title ? "Required" : null}
-                         variant="outlined"
-                         margin="dense"
-                         required
-                         fullWidth
-                         id="title"
-                         label="Title"
-                         name="title"
-                         autoComplete="off"
-                         onChange={this.handleInputChange}
-                         value={this.state.title}
-                     />
-                     <TextField
-                         error={this.state.clicked && !this.state.summary}
-                         helperText={this.state.clicked && !this.state.summary ? "Required" : null}
-                         variant="outlined"
-                         margin="dense"
-                         required
-                         fullWidth
-                         id="summary"
-                         label="Summary"
-                         name="summary"
-                         autoComplete="off"
-                         rows={4}
-                         rowsMax={4}
-                         onChange={this.handleInputChange}
-                         value={this.state.summary}
-                         multiline
-                     />
-                     <TextField
-                         error={this.state.clicked && !this.state.image}
-                         helperText={this.state.clicked && !this.state.image ? "Required" : null}
-                         variant="outlined"
-                         margin="dense"
-                         required
-                         fullWidth
-                         id="image"
-                         label="Image URL"
-                         name="image"
-                         autoComplete="off"
-                         value={this.state.image}
-                         onChange={this.handleInputChange}
-                     />
-                     <div style={this.state.clicked && !this.state.content ? {
-                         marginTop: 10,
-                         borderStyle: "solid",
-                         borderColor: "#f44336"
-                     } : {marginTop: 10}}>
-                         <Editor
-                             value={this.state.content}
-                             id="content"
-                             init={{
-                                 height: 500,
 
-                                 menu: {
-                                     tc: {
-                                         title: 'TinyComments',
-                                         items: 'addcomment showcomments deleteallconversations'
-                                     }
-                                 },
-                                 menubar: 'file edit view insert format tools table tc help',
-                                 plugins: [
-                                     'advlist autolink lists link image',
-                                     'charmap print preview anchor help',
-                                     'searchreplace visualblocks code',
-                                     'insertdatetime media table paste wordcount fullscreen'
-                                 ],
-                                 allow_conditional_comments: true,
+        console.log(this.props.id + "--" + this.state.auther_id)
+        if (!this.props.logged || !PermissionCheck(this.props.type, "admin")) {
+            this.props.parentSetState({
+                dialog: true,
+                alert: true,
+                alertType: "error",
+                alertData: "No permission! please connect first.",
+            });
+            return (<Redirect to='/'/>);
+        } else if (this.state.editPostID != null && !this.state.dataRecived) {
+            return (<LinearProgress />);
+        } else if (this.state.editPostID != null && this.props.id != this.state.auther_id) {
+            this.props.parentSetState({
+                dialog: true,
+                alert: true,
+                alertType: "error",
+                alertData: "No permission! only admin and the current auther can edit the post.",
+            });
+            return (<Redirect to='/'/>);
 
-                                 toolbar:
-                                     'fullscreen  preview save print | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment'
-                             }}
-                             apiKey="xxvvg9qhyrakxs5x5duy04pgns9qrj0x8ph71t1d7q0qz4ju"
-                             onChange={this.handleInputChange}
-                         /></div>
+        } else {
+            return (
+                <Card>
+                    <CardContent>
+                        <Typography variant="h4">
+                            <i className="material-icons md-35">create</i>
+                            New Post
+                        </Typography>
+                        <TextField
+                            error={this.state.clicked && !this.state.title}
+                            helperText={this.state.clicked && !this.state.title ? "Required" : null}
+                            variant="outlined"
+                            margin="dense"
+                            required
+                            fullWidth
+                            id="title"
+                            label="Title"
+                            name="title"
+                            autoComplete="off"
+                            onChange={this.handleInputChange}
+                            value={this.state.title}
+                        />
+                        <TextField
+                            error={this.state.clicked && !this.state.summary}
+                            helperText={this.state.clicked && !this.state.summary ? "Required" : null}
+                            variant="outlined"
+                            margin="dense"
+                            required
+                            fullWidth
+                            id="summary"
+                            label="Summary"
+                            name="summary"
+                            autoComplete="off"
+                            rows={4}
+                            rowsMax={4}
+                            onChange={this.handleInputChange}
+                            value={this.state.summary}
+                            multiline
+                        />
+                        <TextField
+                            error={this.state.clicked && !this.state.image}
+                            helperText={this.state.clicked && !this.state.image ? "Required" : null}
+                            variant="outlined"
+                            margin="dense"
+                            required
+                            fullWidth
+                            id="image"
+                            label="Image URL"
+                            name="image"
+                            autoComplete="off"
+                            value={this.state.image}
+                            onChange={this.handleInputChange}
+                        />
+                        <div style={this.state.clicked && !this.state.content ? {
+                            marginTop: 10,
+                            borderStyle: "solid",
+                            borderColor: "#f44336"
+                        } : {marginTop: 10}}>
+                            <Editor
+                                value={this.state.content}
+                                id="content"
+                                init={{
+                                    height: 500,
 
-                     <ChipInput
-                         value={this.state.tags}
-                         fullWidth
-                         variant="outlined"
-                         label="Tags"
-                         margin="normal"
-                         onAdd={(chip) => this.handleAddChip(chip)}
-                         onDelete={(chip, index) => this.handleDeleteChip(chip, index)}
-                     />
+                                    menu: {
+                                        tc: {
+                                            title: 'TinyComments',
+                                            items: 'addcomment showcomments deleteallconversations'
+                                        }
+                                    },
+                                    menubar: 'file edit view insert format tools table tc help',
+                                    plugins: [
+                                        'advlist autolink lists link image',
+                                        'charmap print preview anchor help',
+                                        'searchreplace visualblocks code',
+                                        'insertdatetime media table paste wordcount fullscreen'
+                                    ],
+                                    allow_conditional_comments: true,
 
-                     <MuiPickersUtilsProvider utils={MomentUtils}>
-                         <DateTimePicker id="publish_date" required minutesStep={5} autoOk
-                                         error={this.state.clicked && !this.state.publish_date}
-                                         helperText={this.state.clicked && !this.state.publish_date ? "Required" : null}
-                                         value={this.state.publish_date} inputVariant="outlined" disablePast
-                                         allowKeyboardControl onChange={this.handlePublishDateChange}
-                                         label="Publish Date" ampm={false}
-                                         format="DD/MM/YYYY HH:mm:00"/>
-                     </MuiPickersUtilsProvider>
+                                    toolbar:
+                                        'fullscreen  preview save print | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment'
+                                }}
+                                apiKey="xxvvg9qhyrakxs5x5duy04pgns9qrj0x8ph71t1d7q0qz4ju"
+                                onChange={this.handleInputChange}
+                            /></div>
 
-                 </CardContent><CardActions><Button
-                 style={{
-                     backgroundColor: "green",
-                 }}
-                 variant="contained"
-                 type="submit"
-                 fullWidth
-                 color="primary">
-                 Save
-             </Button><Button
-                 type="submit"
-                 fullWidth
-                 variant="contained"
-                 color="primary"
-                 onClick={this.sendPost}
-             >
-                 Publish
-             </Button></CardActions></Card>
-         );
-     }
+                        <ChipInput
+                            value={this.state.tags}
+                            fullWidth
+                            variant="outlined"
+                            label="Tags"
+                            margin="normal"
+                            onAdd={(chip) => this.handleAddChip(chip)}
+                            onDelete={(chip, index) => this.handleDeleteChip(chip, index)}
+                        />
+
+                        <MuiPickersUtilsProvider utils={MomentUtils}>
+                            <DateTimePicker id="publish_date" required minutesStep={5} autoOk
+                                            error={this.state.clicked && !this.state.publish_date}
+                                            helperText={this.state.clicked && !this.state.publish_date ? "Required" : null}
+                                            value={this.state.publish_date} inputVariant="outlined" disablePast
+                                            allowKeyboardControl onChange={this.handlePublishDateChange}
+                                            label="Publish Date" ampm={false}
+                                            format="DD/MM/YYYY HH:mm:00"/>
+                        </MuiPickersUtilsProvider>
+
+                    </CardContent><CardActions>
+                    {(this.props.id == this.state.auther_id)?(
+                    <Button
+                    style={{
+                        backgroundColor: "green",
+                    }}
+                    variant="contained"
+                    type="submit"
+                    fullWidth
+                    color="primary">
+                    onClick={this.updatePost}
+                    Save
+                </Button>):(<Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    onClick={this.sendPost}
+                >
+                    Publish
+                </Button>)}</CardActions></Card>
+            );
+        }
     }
 }
 
