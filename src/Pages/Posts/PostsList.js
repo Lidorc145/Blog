@@ -3,32 +3,40 @@ import PostListView from "../Posts/PostListView";
 import axios from 'axios';
 
 
-class Posts extends React.Component {
+class PostsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             postsData: [],
             numOfPosts: 10,
-            page: this.props.page.num
+            page: this.props.page
         };
+        this.getDataFromdb(this.props.page);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-            this.getDataFromdb();
-    }
 
-    getDataFromdb() {
-        if(this.state.postsData.length==0) {
-            axios.get("../posts/page/" + this.state.page).then(res => {
-                this.setState({postsData: res.data, page: this.state.page});
-            })
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        if(this.props.page!=nextProps.page){ //page changes
+            this.getDataFromdb(nextProps.page);
         }
+        return true;
+    }
+
+    async getDataFromdb(page) {
+        let loadingID = this.props.loading.Start();
+        this.setState({postsData: []});
+        await axios.get("../posts/page/" + page).then(res => {
+            this.setState({postsData: res.data});
+        })
+        this.props.loading.Stop(loadingID);
     }
 
     render() {
+        console.log("~~~~~~~~~~~~~",this.props);
         if (this.state.postsData.length != null) {
             return this.state.postsData.map((item, key) => (
-                <PostListView {...this.state} {...this.props} key={this.state.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
+                <PostListView {...this.state} {...this.props} key={this.props.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
                               postPreviewText={item.summary} postImage={item.image} postAuther={item.auther_name}
                               postPublishedTime={item.publish_date}/>
             ));
@@ -37,4 +45,4 @@ class Posts extends React.Component {
     }
 }
 
-export default Posts;
+export default PostsList;

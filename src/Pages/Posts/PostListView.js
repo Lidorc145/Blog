@@ -135,7 +135,7 @@ function MediaControlCard(props) {
                             subheader={"Published " + (PublishDateCalc({date: props.publishDate})) + " by " + props.auther}
                         />
                         <CardContent>
-                           {ReactHtmlParser(props.summary)[0]}
+                            {ReactHtmlParser(props.summary)[0]}
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
@@ -145,7 +145,7 @@ function MediaControlCard(props) {
                         <Button size="small" color="primary" onClick={handleClickOpenShare}>
                             Share
                         </Button>
-                        {(props.full_name===props.auther)?(
+                        {(props.full_name===props.auther || props.type==='admin')?(
                             <Button size="small" color="primary" onClick={() => {  props.history.push("./Edit/Post/"+props.postID)  }}>
                                 Edit
                             </Button>
@@ -169,7 +169,7 @@ function MediaControlCard(props) {
                                 subheader={"Published " + (PublishDateCalc({date: props.publishDate})) + " by " + props.auther}
                             />
                             <CardContent>
-                                {props.summary}
+                                {ReactHtmlParser(props.summary)[0]}
                             </CardContent>
                         </CardActionArea>
                         <CardActions>
@@ -178,8 +178,8 @@ function MediaControlCard(props) {
                             </Button>
                             <Button size="small" color="primary"  onClick={handleClickOpenShare}>
                                 Share
-                            </Button>
-                            {(props.full_name===props.auther)?(
+                            </Button>{console.log("kaka",props)}
+                            {(props.full_name===props.auther || props.type==='admin')?(
                                 <Button size="small" color="primary" onClick={() => {  props.history.push("./Edit/Post/"+props.postID)  }}>
                                     Edit
                                 </Button>

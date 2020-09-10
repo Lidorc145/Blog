@@ -16,14 +16,17 @@ export default class Home extends React.Component {
         this.state = {pageCount: 1,
             alertType: "",
             alertData: "",
-            alert: false};
+            alert: false,
+            page: 1
+        };
+
         this.pageCountCheck();
     }
 
 
-    pageCountCheck() {
-        axios.get(`../posts/page/`).then(res => {
-            //console.log(res.data[0]);
+    async pageCountCheck() {
+        let loadingID = this.props.loading.Start();
+        await (axios.get(`../posts/page/`).then(res => {
             this.setState({pageCount: Math.ceil(res.data[0] / 10)});
         }).catch((err) => {
             this.setState({
@@ -31,24 +34,21 @@ export default class Home extends React.Component {
                 alertData: "DB CONNECTION ERROR: " + err,
                 alert: true
             });
-        });
-
+        }));
+        this.props.loading.Stop(loadingID);
     }
 
     render() {
         return (
             <Container>
                 <article className="mainColumn">
-                    <PostsList {...this.props} />
-                    <Pagination count={this.state.pageCount} defaultPage={this.props.page.num}
+                    <PostsList type={this.props.type} full_name={this.props.full_name} history={this.props.history} loading={this.props.loading} parentSetState={this.props.parentSetState} page={this.state.page} />
+                    <Pagination count={this.state.pageCount} defaultPage={this.state.page}
                                 boundaryCount={this.state.pageCount} variant="outlined" color="primary" onChange={
                         (e, p) => {
-                            this.props.parentSetState({
-                                page: {
-
-                                    num: p
-                                }
-                            })
+                            this.setState({
+                                page: p
+                            });
                         }}/>
                 </article>
                 <Snackbar open={this.state.alert} onClose={this.handleAlertClose} autoHideDuration={3000}>

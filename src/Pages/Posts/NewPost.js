@@ -40,13 +40,13 @@ class NewPost extends React.Component {
             clicked: false
         };
         this.getPostData().then(this.setState({dataRecived: true}));
-        console.log(this.state);
+        console.log("NewPost",this.state);
     }
 
     async getPostData() {
         if (this.state.editPostID != undefined) {
+            let loadingID = this.props.loading.Start();
             await (axios.get(window.location.origin + '/posts/id/' + this.state.editPostID).then(res => {
-                console.log("auther:" + res.data[0].auther_id);
                 if (res.data.length == 1) {
                     this.setState({
                         dataRecived: true,
@@ -60,6 +60,7 @@ class NewPost extends React.Component {
                     });
                 }
             }));
+            this.props.loading.Stop(loadingID);
         }
     }
 
@@ -93,7 +94,7 @@ class NewPost extends React.Component {
         this.setState({clicked: true});
         let s = this.state;
         if (s.title && s.summary && s.content && s.image && s.publish_date) {
-            const url = "posts/";
+            const url = "/posts/";
 
             var data = {
                 title: this.state.title,
@@ -106,6 +107,7 @@ class NewPost extends React.Component {
                 tags_list: JSON.stringify(this.state.tags)
             };
 
+            let loadingID = this.props.loading.Start();
             axios.post(url, data)
                 .then(() => {
                     this.setState({
@@ -130,6 +132,7 @@ class NewPost extends React.Component {
                         alert: true
                     });
                 });
+            this.props.loading.Stop(loadingID);
         } else {
             /*this.props.parentSetState({
                 alertType: "error",
@@ -143,7 +146,7 @@ class NewPost extends React.Component {
         this.setState({clicked: true});
         let s = this.state;
         if (s.title && s.summary && s.content && s.image && s.publish_date) {
-            const url = "posts/";
+            const url = "/posts/update/"+this.props.match.params.id;
 
             var data = {
                 title: this.state.title,
@@ -156,6 +159,7 @@ class NewPost extends React.Component {
                 tags_list: JSON.stringify(this.state.tags)
             };
 
+            let loadingID = this.props.loading.Start();
             axios.post(url, data)
                 .then(() => {
                     this.setState({
@@ -174,6 +178,7 @@ class NewPost extends React.Component {
                         alert: true
                     });
                 });
+            this.props.loading.Stop(loadingID);
         } else {
             this.props.parentSetState({
                 alertType: "error",
@@ -184,21 +189,18 @@ class NewPost extends React.Component {
     }
 
     render() {
-
-        console.log(this.props.id + "--" + this.state.auther_id)
-        if (!this.props.logged || !PermissionCheck(this.props.type, "admin")) {
+        console.log("papa",this.props);
+        if (!this.props.logged || !PermissionCheck(this.props.type, "auther")) {
             this.props.parentSetState({
-                dialog: true,
                 alert: true,
                 alertType: "error",
                 alertData: "No permission! please connect first.",
             });
             return (<Redirect to='/'/>);
         } else if (this.state.editPostID != null && !this.state.dataRecived) {
-            return (<LinearProgress />);
-        } else if (this.state.editPostID != null && this.props.id != this.state.auther_id) {
+            return (<LinearProgress/>);
+        } else if (this.state.editPostID != null && (this.props.id != this.state.auther_id && this.props.type!='admin' )) {
             this.props.parentSetState({
-                dialog: true,
                 alert: true,
                 alertType: "error",
                 alertData: "No permission! only admin and the current auther can edit the post.",
@@ -211,7 +213,7 @@ class NewPost extends React.Component {
                     <CardContent>
                         <Typography variant="h4">
                             <i className="material-icons md-35">create</i>
-                            New Post
+                            {this.state.editPostID?"Edit Post":"New Post"}
                         </Typography>
                         <TextField
                             error={this.state.clicked && !this.state.title}
@@ -312,26 +314,33 @@ class NewPost extends React.Component {
                         </MuiPickersUtilsProvider>
 
                     </CardContent><CardActions>
-                    {(this.props.id == this.state.auther_id)?(
-                    <Button
-                    style={{
-                        backgroundColor: "green",
-                    }}
-                    variant="contained"
-                    type="submit"
-                    fullWidth
-                    color="primary">
-                    onClick={this.updatePost}
-                    Save
-                </Button>):(<Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={this.sendPost}
-                >
-                    Publish
-                </Button>)}</CardActions></Card>
+                    {(this.props.id == this.state.auther_id ||this.props.type==='admin') ?
+                        (
+                            <Button
+                                style={{
+                                    backgroundColor: "green",
+                                }}
+                                variant="contained"
+                                type="submit"
+                                fullWidth
+                                color="primary"
+                                onClick={this.updatePost}
+                            >
+                                Save
+                            </Button>
+                        ) : (
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={this.sendPost}
+                            >
+                                Publish
+                            </Button>
+                        )}
+                </CardActions>
+                </Card>
             );
         }
     }

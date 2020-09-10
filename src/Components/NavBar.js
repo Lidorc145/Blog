@@ -270,8 +270,7 @@ function LabelBottomNavigation(props) {
             |<NavLink to="/AboutMe" className="inactive" activeClassName="active"> ABOUT ME </NavLink>
             |<NavLink to="/NewPost" className="inactive" activeClassName="active"> NEW POST </NavLink>
             | <NavLink to={"/test"} className="inactive" activeClassName="active" onClick={testButton}>
-
-                    TEST </NavLink>
+            TEST </NavLink>
 
         </Typography>
     );

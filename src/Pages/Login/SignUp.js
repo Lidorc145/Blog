@@ -27,30 +27,20 @@ function SignUp(props) {
         onSubmit: async values => {
 
             await (axios.get("../users/username/" + formik.values.username).then(res => {
-                //formik.validateForm();
-                console.log(res.data);
                 if (res.data.length != 0) {
                     usernameValid = false;
-                   // formik.validateForm();
                 } else {
                     usernameValid = true;
-                   // formik.validateForm();
                 }
-                console.log("AAAAAAAAAAAAA");
+
             }));
             await (axios.get("../users/email/" + formik.values.email).then(res => {
-                console.log(res.data);
-                //formik.validateForm();
                 if (res.data.length != 0) {
                     emailValid = false;
-                 //   formik.validateForm();
                 } else {
                     emailValid = true;
-                //    formik.validateForm();
                 }
-                console.log("BBBBBBBBB");
             }));
-            console.log("ccccccc");
             await(formik.validateForm());
             if(emailValid && usernameValid){
                 let a = JSON.parse(JSON.stringify(formik.values));
@@ -117,10 +107,8 @@ function SignUp(props) {
         })
     });
 
-    // console.log(props);
     const handleSubmit = (event) => {
-        event.preventDefault()
-        console.log(event.target);
+        event.preventDefault();
         let fullName = event.target.fullName.value;
         let username = event.target.username.value;
         let password = event.target.password.value;
@@ -133,7 +121,6 @@ function SignUp(props) {
             };
             axios.post(url, data)
                 .then((res) => {
-                    console.log(res.data);
                     props.parentSetState(JSON.parse(JSON.stringify(res.data)));
                     props.parentSetState({logged: true, dialog: false});
                     props.parentSetState({
@@ -144,7 +131,6 @@ function SignUp(props) {
 
                 })
                 .catch((err) => {
-                    console.error("Error login" + err);
                     props.parentSetState({
                         alertType: "error",
                         alertData: "Error: " + err,
@@ -187,9 +173,6 @@ function SignUp(props) {
             </Card></Container>
         );
     } else {
-        //this.props.history.goBack();
-        console.log(props);
-
         return ("Already Connected!");
     }
 }

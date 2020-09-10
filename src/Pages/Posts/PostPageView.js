@@ -46,16 +46,18 @@ class PostPageView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            postID: props.match.params.id,
+            postID: props.postID,
             postData: null
         };
         this.getDataFromdb();
     }
 
     async getDataFromdb() {
-        await axios.get("/posts/id/" + this.state.postID).then(res => {
+        let loadingID = this.props.loading.Start();
+        await (axios.get("/posts/id/" + this.state.postID).then(res => {
             this.setState({postData: res.data});
-        })
+        }));
+        this.props.loading.Stop(loadingID);
     }
 
     render() {
@@ -63,7 +65,7 @@ class PostPageView extends React.Component {
             let postData = this.state.postData[0];
             return (
                 <Container justify="center">
-                    <MediaControlCard {...postData} />
+                    <MediaControlCard history={this.props.history} {...postData} />
                 </Container>
             );
         }
@@ -75,13 +77,14 @@ class PostPageView extends React.Component {
 function ShowTagsList(props) {
     const classes = useStyles();
 
-    const handleClick = () => {
-        console.info('You clicked the Chip.');
+    const handleClick = (chipToDelete) => () => {
+        props.history.push('../tags/search/' + chipToDelete);
     };
 
     let listTags = (entities.decode(props.value));
     let tags = (JSON.parse(listTags)).map(tagName => (
-        <Chip key={tagName.toString()} variant="outlined" onClick={handleClick} color="primary" label={tagName}/>
+        <Chip key={tagName.toString()} variant="outlined" onClick={handleClick(tagName)} color="primary"
+              label={tagName}/>
     ));
 
     return (<div className={classes.root}>{tags}</div>);
@@ -104,7 +107,7 @@ function MediaControlCard(props) {
                         <Typography variant="subtitle1" color="textSecondary">
                             {renderHTML(props.summary)}
                         </Typography>
-                        <ShowTagsList value={props.tags_list}/>
+                        <ShowTagsList history={props.history} value={props.tags_list}/>
                     </CardContent>
                     {renderHTML(entities.decode(props.content))}
                 </CardBody>

@@ -1,5 +1,5 @@
 {
-  "name": "assignment4",
+  "name": "BlogSystem",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -71,7 +71,7 @@
     "webpack": "4.42.0",
     "yup": "^0.29.3"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "http://ec2-100-25-137-135.compute-1.amazonaws.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -100,10 +100,10 @@
     "formik": "^2.1.5",
     "react-datetimepicker-bootstrap": "^1.1.2"
   },
-  "repository": "git+https://github.com/Lidorc145/FullStackHw4.git",
+  "repository": "git+https://github.com/Lidorc145/Blog.git",
   "author": "Lidor Cohen <LidorC145@Gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Lidorc145/FullStackHw4/issues"
+    "url": "https://github.com/Lidorc145/Blog/issues"
   }
 }

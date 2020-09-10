@@ -35,7 +35,6 @@ function Login (props) {
                     });
                 })
                 .catch((err) => {
-                    console.error("Error login" + err);
                     props.parentSetState({
                         alertType: "error",
                         alertData: "Error: " + err,

@@ -14,9 +14,11 @@ import Alert from "@material-ui/lab/Alert";
 import Cookies from 'js-cookie';
 import {textAlign} from "@material-ui/system";
 import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import historyContext from "react-router/modules/HistoryContext";
 
 
-
+console.log("dasdasd");
 class App extends React.Component {
 
     constructor(props) {
@@ -33,56 +35,63 @@ class App extends React.Component {
             alertData: null,
             dialog: false,
             dialogContext: "dialogContext",
-            page: {
-                name: 'Home',
-                num: 1
-            },
             parentSetState: this.parentSetState.bind(this),
             sessionCheck: this.sessionCheck.bind(this),
             data: null,
-            sessionID: null
+            sessionID: undefined,
+            loadingState: false
         };
-        if(this.state.data!=null) {
-            console.log(this.state.data);
-            this.setState({data: this.pageCountCheck()});
+
+        let loadingList = [];
+        let loadingID = 1;
+        this.loadingStart = () =>{
+            loadingList.push(loadingID);
+            this.setState({loadingState: true});
+            return loadingID++;
         }
+        this.loadingStop = (ID) =>{
+            let index = loadingList.indexOf(ID);
+            if (index > -1) {
+                loadingList.splice(index, 1);
+            }
+            if(loadingList.length==0) {
+                this.setState({loadingState: false});
+            }
+        }
+
         this.parentSetState = this.parentSetState.bind(this);
-        //;
-        console.log(this.state.sessionID);
-        if(this.state.sessionID===null) {
-            this.sessionCheck();
+        this.loadingStart=this.loadingStart.bind(this);
+        this.loadingStop=this.loadingStop.bind(this);
+
+        if(this.state.sessionID===undefined) {
+            this.sessionCheck().finally(()=>{console.log(this.state)});
         }
     }
+
 
     parentSetState(jsonState) {
         this.setState(jsonState);
     }
-    async pageCountCheck() {
-        await axios.get(`posts/page5/`).then(res => {
-           // console.log(res.data[0]);
-            // this.setState({pageCount: Math.ceil(res.data[0]/10)});
-        }).catch((err) => {
-            this.setState({
-                alertType: "error",
-                alertData: "DB CONNECTION ERROR: " + err,
-                alert: true
-            });
-        });
-    }
 
     async sessionCheck(){
+        console.log("start");
         if(Cookies.get('sessionID')!=null) {
-            let url = "./sessionCheck/";
-            await axios.post(url)
+            let loadingID = this.loadingStart();
+            let url = "/sessionCheck/";
+            await (axios.post(url)
                 .then((res) => {
-                    this.setState({logged: true, sessionID: Cookies.get('sessionID') });
-                    this.setState(res.data);
-                })
-                .catch((err) => {
-                    console.error("Error Session: " + err);
-                    this.setState({sessionID: null, id: null, username: null, full_name: null, type: null, logged: false});
-                });
+                    console.log("session",Object.assign({logged: true, sessionID: Cookies.get('sessionID')},res.data));
+                    this.setState(Object.assign({logged: true, sessionID: Cookies.get('sessionID')},res.data));
+                }).catch((err) => {
+                    this.setState({sessionID: null});
+                    this.parentSetState({
+                        alertType: "error",
+                        alertData: "SESSION ERROR: " + err,
+                        alert: true
+                    })}));
+            this.loadingStop(loadingID);
         }
+        console.log("stop");
     }
 
     handleAlertClose = (event, reason) => {
@@ -93,30 +102,36 @@ class App extends React.Component {
     };
 
     render(props) {
-
+        let loading={
+            Start: this.loadingStart,
+            Stop:  this.loadingStop
+        }
         return (
             <div>
                 <BrowserRouter>
-                    <div>
+                    <div id="appBar">
                         <header>
                             <AppBar>
                                 <Route component={(props) => <NavBar {...props} {...this.state} />}/>
+                                {this.state.loadingState && <LinearProgress />}
                             </AppBar>
 
                         </header>
                     </div>
-                    <div id="wide">
+                    <div id="wide">{ !(Cookies.get('sessionID')!=null && this.state.sessionID===undefined) &&
                          <Switch>
-                            <Route path="/AboutMe" component={AboutMe}/>
-                            <Route path="/Post/:id" component={PostPageView}/>
-                            <Route path="/NewPost" component={(props) => <NewPost {...props} {...this.state}
+                            <Route path="/AboutMe" render={()=><AboutMe/>}/>
+                            <Route path="/Post/:id" render={(props)=><PostPageView history={props.history} loading={loading} postID={props.match.params.id}/>}/>
+                             <Route path="/tags/search/:tagName" render={(props)=><div>Soon you will see all the posts with the tag: '{props.match.params.tagName}' </div>}/>
+
+                              <Route path="/NewPost" render={(props) => <NewPost {...props} {...this.state} loading={loading}
                                                                                   isAuthenticated={true}/>}/>
-                            <Route path="/Edit/Post/:id" component={(props) => <NewPost {...props} {...this.state}
+                            <Route path="/Edit/Post/:id" render={(props) => <NewPost {...props} {...this.state} loading={loading}
                                                                                   isAuthenticated={true}/>}/>
-                            <Route path="/Home" component={(props) => <Home {...props} {...this.state} />}/>
+                            <Route path="/Home" render={(props) => <Home type={this.state.type} full_name={this.state.full_name} history={props.history} loading={loading} parentSetState={this.parentSetState} />}/>
                             <Route path="/SignUp" render={(props) => <SignUp {...props} {...this.state} />}/>
-                            <Route component={()=>(<Redirect from="/" to="/Home"/>)} />
-                        </Switch>
+                            <Route render={()=>(<Redirect from="/" to="/Home"/>)} />
+                        </Switch>}
                     </div>
                     <Snackbar open={this.state.alert} onClose={this.handleAlertClose} autoHideDuration={3000}>
                         <Alert severity={this.state.alertType} elevation={6}
