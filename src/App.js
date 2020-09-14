@@ -12,12 +12,9 @@ import {AppBar, Snackbar} from '@material-ui/core';
 import axios from "axios";
 import Alert from "@material-ui/lab/Alert";
 import Cookies from 'js-cookie';
-import {textAlign} from "@material-ui/system";
-import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import historyContext from "react-router/modules/HistoryContext";
-
-
+import Tags from "./Pages/Tags/Tags"
+import TagsPostsList from "./Pages/Tags/TagsPostsList"
 console.log("dasdasd");
 class App extends React.Component {
 
@@ -54,7 +51,7 @@ class App extends React.Component {
             if (index > -1) {
                 loadingList.splice(index, 1);
             }
-            if(loadingList.length==0) {
+            if(loadingList.length===0) {
                 this.setState({loadingState: false});
             }
         }
@@ -101,6 +98,12 @@ class App extends React.Component {
         this.setState({alert: false});
     };
 
+    handleAddToHomescreenClick = () => {
+        alert(`
+    1. Open Share menu
+    2. Tap on "Add to Home Screen" button`);
+    };
+
     render(props) {
         let loading={
             Start: this.loadingStart,
@@ -121,10 +124,11 @@ class App extends React.Component {
                     <div id="wide">{ !(Cookies.get('sessionID')!=null && this.state.sessionID===undefined) &&
                          <Switch>
                             <Route path="/AboutMe" render={()=><AboutMe/>}/>
-                            <Route path="/Post/:id" render={(props)=><PostPageView history={props.history} loading={loading} postID={props.match.params.id}/>}/>
-                             <Route path="/tags/search/:tagName" render={(props)=><div>Soon you will see all the posts with the tag: '{props.match.params.tagName}' </div>}/>
+                            <Route path="/Post/:id" render={(props)=><PostPageView history={props.history} loading={loading} postID={props.match.params.id} parentSetState={this.parentSetState}/>}/>
+                            <Route path="/Tags/id/:tagID" render={(props)=><TagsPostsList tagID={props.match.params.tagID} loading={loading}  history={props.history} />}/>
+                             <Route path="/Tags/" render={(props)=><Tags loading={loading}  history={props.history} />}/>
 
-                              <Route path="/NewPost" render={(props) => <NewPost {...props} {...this.state} loading={loading}
+                             <Route path="/NewPost" render={(props) => <NewPost {...props} {...this.state} loading={loading}
                                                                                   isAuthenticated={true}/>}/>
                             <Route path="/Edit/Post/:id" render={(props) => <NewPost {...props} {...this.state} loading={loading}
                                                                                   isAuthenticated={true}/>}/>

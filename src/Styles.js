@@ -1,11 +1,10 @@
-import React from "react";
 import {fade, makeStyles} from "@material-ui/core/styles";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+//import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 
 
 
 function Styles() {
-    const theme= createMuiTheme({
+    /*const theme= createMuiTheme({
         palette: {
             primary: {
                 main: "#2c9520",
@@ -30,7 +29,7 @@ function Styles() {
             width: '100%',
             paddingTop: '56.25%', // 16:9
         },
-    });
+    });*/
     const useStyles = makeStyles((theme) => ({
         root: {
             backgroundColor: theme.palette.background.paper,

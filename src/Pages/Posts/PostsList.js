@@ -17,7 +17,7 @@ class PostsList extends React.Component {
 
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if(this.props.page!=nextProps.page){ //page changes
+        if(this.props.page!==nextProps.page){ //page changes
             this.getDataFromdb(nextProps.page);
         }
         return true;
@@ -33,8 +33,7 @@ class PostsList extends React.Component {
     }
 
     render() {
-        console.log("~~~~~~~~~~~~~",this.props);
-        if (this.state.postsData.length != null) {
+        if (this.state.postsData.length !== null) {
             return this.state.postsData.map((item, key) => (
                 <PostListView {...this.state} {...this.props} key={this.props.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
                               postPreviewText={item.summary} postImage={item.image} postAuther={item.auther_name}

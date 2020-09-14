@@ -1,6 +1,5 @@
 import React from 'react';
-import {Button, TextField, Typography, Card, CardActions, CardContent, Snackbar} from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import {Button, TextField, Typography, Card, CardActions, CardContent} from '@material-ui/core';
 import {Editor} from '@tinymce/tinymce-react';
 import ChipInput from 'material-ui-chip-input';
 import MomentUtils from '@date-io/moment';
@@ -15,11 +14,8 @@ import axios from 'axios';
 import moment from "moment";
 import PermissionCheck from "../../Accessories/PermissionCheck";
 import ReactHtmlParser from 'react-html-parser';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Fade from "@material-ui/core/Fade";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Container from "@material-ui/core/Container";
 
 class NewPost extends React.Component {
     constructor(props) {
@@ -47,17 +43,24 @@ class NewPost extends React.Component {
         if (this.state.editPostID != undefined) {
             let loadingID = this.props.loading.Start();
             await (axios.get(window.location.origin + '/posts/id/' + this.state.editPostID).then(res => {
-                if (res.data.length == 1) {
+                if (res.data.length >0) {
+                    let tags=JSON.parse(res.data[1]);
+                    let tagsArray = [];
+                    for (let i = 0; i <tags.length ; i++) {
+                        tagsArray.push(tags[i].tag_name);
+                    }
+                    console.log(tagsArray);
                     this.setState({
                         dataRecived: true,
                         title: res.data[0].title,
-                        summary: res.data[0].summary,
+                        summary: ReactHtmlParser(res.data[0].summary)[0],
                         content: ReactHtmlParser(res.data[0].content)[0],
                         auther_id: res.data[0].auther_id,
                         image: res.data[0].image,
                         publish_date: res.data[0].publish_date,
-                        tags: JSON.parse(res.data[0].tags_list.replace(/&quot;/g, '"'))
+                        tags: tagsArray
                     });
+
                 }
             }));
             this.props.loading.Stop(loadingID);
@@ -82,7 +85,7 @@ class NewPost extends React.Component {
     }
 
     handleInputChange = (e) => {
-        if (e.target.id === 'content') {
+        if (e.target.id == 'content') {
             this.setState({content: e.target.getContent()});
         } else {
             this.setState({[e.target.id]: e.target.value});
@@ -109,7 +112,7 @@ class NewPost extends React.Component {
 
             let loadingID = this.props.loading.Start();
             axios.post(url, data)
-                .then(() => {
+                .then((res) => {
                     this.setState({
                         title: "",
                         summary: "",
@@ -124,6 +127,7 @@ class NewPost extends React.Component {
                         alertData: "Success: The post added successfully!",
                         alert: true
                     });
+                    this.props.history.push('/Post/'+res.data);
                 })
                 .catch((err) => {
                     this.props.parentSetState({
@@ -134,11 +138,11 @@ class NewPost extends React.Component {
                 });
             this.props.loading.Stop(loadingID);
         } else {
-            /*this.props.parentSetState({
+            this.props.parentSetState({
                 alertType: "error",
                 alertData: "Invalid values.",
                 alert: true
-            });*/
+            });
         }
     }
 
@@ -170,6 +174,7 @@ class NewPost extends React.Component {
                         alertData: "Success: The post updated successfully!",
                         alert: true
                     });
+                    this.props.history.push('/Post/'+this.props.match.params.id);
                 })
                 .catch((err) => {
                     this.props.parentSetState({
@@ -186,6 +191,32 @@ class NewPost extends React.Component {
                 alert: true
             });
         }
+    }
+
+    deletePost = () => {
+        const url = "/posts/delete/"+this.props.match.params.id;
+
+        let loadingID = this.props.loading.Start();
+        axios.get(url)
+            .then(() => {
+                this.setState({
+                    clicked: false
+                });
+                this.props.parentSetState({
+                    alertType: "success",
+                    alertData: "Success: The post successfully deleted!",
+                    alert: true
+                });
+                this.props.history.push('/Home');
+            })
+            .catch((err) => {
+                this.props.parentSetState({
+                    alertType: "error",
+                    alertData: " " + err,
+                    alert: true
+                });
+            });
+        this.props.loading.Stop(loadingID);
     }
 
     render() {
@@ -209,6 +240,7 @@ class NewPost extends React.Component {
 
         } else {
             return (
+                <Container>
                 <Card>
                     <CardContent>
                         <Typography variant="h4">
@@ -314,8 +346,20 @@ class NewPost extends React.Component {
                         </MuiPickersUtilsProvider>
 
                     </CardContent><CardActions>
-                    {(this.props.id == this.state.auther_id ||this.props.type==='admin') ?
+                    {((this.props.id == this.state.auther_id ||this.props.type=='admin')&&this.props.match.params.id!=undefined) ?
                         (
+                            <React.Fragment><Button
+                                style={{
+                                    backgroundColor: "red",
+                                }}
+                                variant="contained"
+                                type="submit"
+                                fullWidth
+                                color="primary"
+                                onClick={this.deletePost}
+                            >
+                                Delete
+                            </Button>
                             <Button
                                 style={{
                                     backgroundColor: "green",
@@ -328,6 +372,7 @@ class NewPost extends React.Component {
                             >
                                 Save
                             </Button>
+                            </React.Fragment>
                         ) : (
                             <Button
                                 type="submit"
@@ -341,6 +386,7 @@ class NewPost extends React.Component {
                         )}
                 </CardActions>
                 </Card>
+                </Container>
             );
         }
     }

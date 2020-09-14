@@ -1,8 +1,5 @@
 import React from "react";
-import {
-    BrowserRouter,
-    NavLink, Router
-} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -17,24 +14,15 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import * as Styles from "../Styles.js";
 import BookOutlinedIcon from '@material-ui/icons/BookOutlined';
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import {createMuiTheme} from '@material-ui/core/styles';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import axios from "axios";
 import Link from "@material-ui/core/Link";
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import Button from "@material-ui/core/Button";
-import {
-    BrowserView,
-    MobileView,
-    isBrowser,
-    isMobile
-} from "react-device-detect";
+import {BrowserView, MobileView} from "react-device-detect";
 import Fab from "@material-ui/core/Fab";
 import Zoom from "@material-ui/core/Zoom";
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
 import UpIcon from '@material-ui/icons/KeyboardArrowUp';
-
 import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Tooltip from "@material-ui/core/Tooltip";
 import DialogSlideUP from "./DialogSlideUP";
@@ -47,7 +35,6 @@ function NavBar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -57,9 +44,6 @@ function NavBar(props) {
     const handleMenuClose = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
-    };
-    const handleMobileMenuOpen = (event) => {
-        setMobileMoreAnchorEl(event.currentTarget);
     };
 
     const theme= createMuiTheme({
@@ -269,6 +253,7 @@ function LabelBottomNavigation(props) {
             <NavLink to="/Home" className="inactive" activeClassName="active"> HOME </NavLink>
             |<NavLink to="/AboutMe" className="inactive" activeClassName="active"> ABOUT ME </NavLink>
             |<NavLink to="/NewPost" className="inactive" activeClassName="active"> NEW POST </NavLink>
+            |<NavLink to="/Tags" className="inactive" activeClassName="active"> TAGS </NavLink>
             | <NavLink to={"/test"} className="inactive" activeClassName="active" onClick={testButton}>
             TEST </NavLink>
 

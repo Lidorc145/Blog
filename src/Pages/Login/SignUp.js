@@ -1,13 +1,11 @@
 import React from 'react';
 import axios from "axios";
 import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
-import {FacebookLoginButton, GoogleLoginButton, TwitterLoginButton} from "react-social-login-buttons";
 import * as Styles from "../../Styles.js";
-import {Field, Form, Formik, FormikProvider, useField, useFormik} from 'formik';
+import {Form, FormikProvider, useField, useFormik} from 'formik';
 import * as Yup from "yup";
 import TextField from "@material-ui/core/TextField";
 
@@ -27,7 +25,7 @@ function SignUp(props) {
         onSubmit: async values => {
 
             await (axios.get("../users/username/" + formik.values.username).then(res => {
-                if (res.data.length != 0) {
+                if (res.data.length !== 0) {
                     usernameValid = false;
                 } else {
                     usernameValid = true;
@@ -35,7 +33,7 @@ function SignUp(props) {
 
             }));
             await (axios.get("../users/email/" + formik.values.email).then(res => {
-                if (res.data.length != 0) {
+                if (res.data.length !== 0) {
                     emailValid = false;
                 } else {
                     emailValid = true;
@@ -106,39 +104,6 @@ function SignUp(props) {
 
         })
     });
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        let fullName = event.target.fullName.value;
-        let username = event.target.username.value;
-        let password = event.target.password.value;
-        if (username != null && password != null) {
-            let url = "../register/";
-            let data = {
-                full_name: fullName,
-                username: username,
-                password: password
-            };
-            axios.post(url, data)
-                .then((res) => {
-                    props.parentSetState(JSON.parse(JSON.stringify(res.data)));
-                    props.parentSetState({logged: true, dialog: false});
-                    props.parentSetState({
-                        alertType: "success",
-                        alertData: "Success: You are connected to the system.",
-                        alert: true
-                    });
-
-                })
-                .catch((err) => {
-                    props.parentSetState({
-                        alertType: "error",
-                        alertData: "Error: " + err,
-                        alert: true
-                    });
-                });
-        }
-    }
 
     if (!props.logged) {
 

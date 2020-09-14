@@ -1,5 +1,4 @@
 import React from "react";
-import useTheme from "@material-ui/core/styles/useTheme";
 import {Card, Container} from "@material-ui/core";
 import CardBody from "reactstrap/es/CardBody";
 import Typography from "@material-ui/core/Typography";
