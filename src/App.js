@@ -153,7 +153,7 @@ class App extends React.Component {
                     <div id="wide">{ !(Cookies.get('sessionID')!=null && this.state.sessionID==undefined) &&
                          <Switch>
                             <Route path="/AboutMe" render={()=><AboutMe/>}/>
-                            <Route path="/Post/:id" render={(props)=><PostPageView history={props.history} loading={loading} postID={props.match.params.id} parentSetState={this.parentSetState} fullName={this.state.full_name} type={this.state.type}/>} />
+                            <Route path="/Post/:id" render={(props)=><PostPageView history={props.history} loading={loading} postID={props.match.params.id} parentSetState={this.parentSetState} fullName={this.state.full_name} type={this.state.type} logged={this.state.logged}/>} />
                              <Route path="/Tags/id/:tagID" render={(props)=><TagsPostsList type={this.state.type} full_name={this.state.full_name} tagID={props.match.params.tagID} loading={loading}  history={props.history} />}/>
                              <Route path="/Search/:value" render={(props)=><Search type={this.state.type} full_name={this.state.full_name} value={props.match.params.value} loading={loading}  history={props.history} />}/>
                              <Route path="/Tags/" render={(props)=><Tags loading={loading}  history={props.history} />}/>
