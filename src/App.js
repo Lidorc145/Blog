@@ -91,6 +91,7 @@ class App extends React.Component {
                 .then((res) => {
                     this.setState(Object.assign({logged: true, sessionID: Cookies.get('sessionID')},res.data));
                 }).catch((err) => {
+                    Cookies.remove('sessionID');
                     this.setState({sessionID: null});
                     this.parentSetState({
                         alertType: "error",
