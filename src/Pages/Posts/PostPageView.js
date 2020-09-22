@@ -162,7 +162,7 @@ function MediaControlCard(props) {
             </div>
         </Card>
             <br />
-            <CommentsSection postID={props.postID} loading={props.loading} parentSetState={props.parentSetState} />
+            <CommentsSection {...props} postID={props.postID} loading={props.loading} parentSetState={props.parentSetState} />
         </Container>
     );
 }

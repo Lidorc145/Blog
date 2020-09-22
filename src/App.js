@@ -72,8 +72,8 @@ class App extends React.Component {
         this.loadingStop=this.loadingStop.bind(this);
         this.logout=this.logout.bind(this);
 
-        if(this.state.sessionID===undefined) {
-            this.sessionCheck().finally(()=>{console.log(this.state)});
+        if(this.state.sessionID==undefined) {
+            this.sessionCheck();
         }
     }
 
@@ -84,15 +84,12 @@ class App extends React.Component {
     }
 
     async sessionCheck(){
-        console.log("start");
         if(Cookies.get('sessionID')!=null) {
             let loadingID = this.loadingStart();
             let url = "/sessionCheck/";
             await (axios.post(url)
                 .then((res) => {
-                    console.log("session",Object.assign({logged: true, sessionID: Cookies.get('sessionID')},res.data));
                     this.setState(Object.assign({logged: true, sessionID: Cookies.get('sessionID')},res.data));
-                    console.log(this.state);
                 }).catch((err) => {
                     this.setState({sessionID: null});
                     this.parentSetState({
@@ -102,7 +99,6 @@ class App extends React.Component {
                     })}));
             this.loadingStop(loadingID);
         }
-        console.log("stop");
     }
 
     handleAlertClose = (event, reason) => {

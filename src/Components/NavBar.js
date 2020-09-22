@@ -149,7 +149,7 @@ function NavBar(props) {
                         </div>
 
                         <div className={classes.toolbar}>   {showMobileUserMenu ? (<div>
-                                <div className={classes.toolbar}>  {searchMenu()}</div>
+                                <div className={classes.toolbar}>  {searchMenu(props)}</div>
                                 <div className={classes.toolbar}>   {userMenu()}</div>
                             </div>
                         ):null}</div>
@@ -169,7 +169,7 @@ function NavBar(props) {
 
                 </BrowserView>
             </AppBar>
-            <DialogSlideUP {...props} open={props.dialog} dialog={props.dialog} dialogContent={(<Login  parentSetState={props.parentSetState} sessionCheck={props.sessionCheck} logged={props.logged} />)} />
+            <DialogSlideUP {...props} open={props.dialog} dialog={props.dialog} dialogContent={(<Login history={props.history}  parentSetState={props.parentSetState} sessionCheck={props.sessionCheck} logged={props.logged} />)} />
         </div>
     );
 

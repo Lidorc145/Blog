@@ -20,27 +20,29 @@ class Search extends React.Component {
         super(props);
         this.state = {
             postsData: [],
-            value:  null
+            value:  this.props.value
         };
-        this.getDataFromdb();
+        this.getDataFromdb(this.props.value);
     }
 
+
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if(this.props.value!==nextProps.value){ //page changes
+        if(this.state.value!==nextProps.value){ //page changes
             this.setState({value: nextProps.value});
             this.getDataFromdb(nextProps.value);
-            this.render();
         }
         return true;
     }
 
-    async getDataFromdb() {
-        let loadingID = this.props.loading.Start();
-        this.setState({postsData: []});
-        await axios.get("/search/" + this.props.value).then(res => {
-            this.setState({postsData: res.data, value: this.props.value});
-        })
-        this.props.loading.Stop(loadingID);
+    async getDataFromdb(searchValue) {
+        if (this.state.value != null) {
+            let loadingID = this.props.loading.Start();
+            this.setState({postsData: []});
+            await axios.get("/search/" + searchValue).then(res => {
+                this.setState({postsData: res.data, value: searchValue});
+            })
+            this.props.loading.Stop(loadingID);
+        }
     }
 
     render() {
