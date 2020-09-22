@@ -3,38 +3,16 @@ import axios from 'axios';
 import {Card, Container} from "@material-ui/core";
 import CardBody from "reactstrap/es/CardBody";
 import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import GridListTile from "@material-ui/core/GridListTile";
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        width: '100%',
-        flexWrap: 'wrap',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        },
-    },
-    details: {
-        display: 'block',
-        flexDirection: 'column',
-        width: '100%'
-    },
-    content: {
-        flex: '1 0 auto',
-        width: '100%'
-    },
-    cover: {
-        width: 350,
+import Link from "@material-ui/core/Link";
+import Typography from "@material-ui/core/Typography";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import HomeIcon from '@material-ui/icons/Home';
+import GrainIcon from '@material-ui/icons/Grain';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 
-    },
-    controls: {
-        display: 'flex',
-        alignItems: 'left',
-        paddingLeft: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
-    },
-}));
+
 
 
 class Tags extends React.Component {
@@ -67,9 +45,9 @@ class Tags extends React.Component {
                 }
             }
             tagsButtons = this.state.tagsData.map((item, key) => (
-                <GridListTile key={key}  spacing={3}><Button color="primary" variant={"outlined"}  onClick={()=> this.props.history.push('/Tags/id/'+item.tag_id)}>
-                        <h2 style={{fontSize: parseInt(15+5*item.count/(max/20))+'px'}}>{item.tag_name}</h2>
-                </Button></GridListTile>
+                <GridListTile key={key}  spacing={3}><Link color="primary" variant={"outlined"}  onClick={()=> this.props.history.push('/Tags/id/'+item.tag_id)}>
+                        <h2 style={{fontSize: parseInt(10+10*item.count/(max/10))+'px'}}>{item.tag_name}</h2>
+                </Link></GridListTile>
             ));
         }
         return (
@@ -82,18 +60,46 @@ class Tags extends React.Component {
 }
 
 function MediaControlCard(props) {
-    const classes = useStyles();
     return (
-        <Card className={classes.root}>
-            <div className={classes.details} align={"center"}>
+        <div><IconBreadcrumbs/>
+        <Card>
+            <div align={"center"}>
                 <CardBody>
-
-                    <CardContent className={classes.content}>
+                    <CardContent>
                         {props.tags}
                     </CardContent>
                 </CardBody>
             </div>
-        </Card>
+        </Card></div>
     );
 }
+
+
+const useStyles = makeStyles((theme) => ({
+    link: {
+        display: 'flex',
+    },
+    icon: {
+        marginRight: theme.spacing(0.5),
+        width: 20,
+        height: 20,
+    }
+}));
+function IconBreadcrumbs() {
+    const classes = useStyles();
+
+    return (
+        <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/" href="/home" className={classes.link}>
+                <HomeIcon className={classes.icon} />
+                Blog System
+            </Link>
+            <Typography color="textPrimary" className={classes.link}>
+                <LocalOfferIcon className={classes.icon} />
+                Tags
+            </Typography>
+        </Breadcrumbs>
+    );
+}
+
 export default Tags;

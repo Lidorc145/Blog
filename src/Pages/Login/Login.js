@@ -5,6 +5,7 @@ import {FacebookLoginButton, GoogleLoginButton, TwitterLoginButton} from "react-
 import * as Styles from "../../Styles.js";
 
 function Login (props) {
+    console.log(props);
     const {history} = props;
     const classes = Styles.default()();
 
@@ -33,6 +34,7 @@ function Login (props) {
                         alert: true,
                         dialog: false
                     });
+                    props.sessionCheck();
                 })
                 .catch((err) => {
                     props.parentSetState({

@@ -24,18 +24,20 @@ export default class Home extends React.Component {
     }
 
 
-    async pageCountCheck() {
+    pageCountCheck() {
         let loadingID = this.props.loading.Start();
-        await (axios.get(`../posts/page/`).then(res => {
+        axios.get(`../posts/page/`).then(res => {
             this.setState({pageCount: Math.ceil(res.data[0] / 10)});
+            this.props.loading.Stop(loadingID);
         }).catch((err) => {
             this.setState({
                 alertType: "error",
                 alertData: "DB CONNECTION ERROR: " + err,
                 alert: true
             });
-        }));
-        this.props.loading.Stop(loadingID);
+            this.props.loading.Stop(loadingID);
+        });
+
     }
 
     render() {
@@ -58,10 +60,7 @@ export default class Home extends React.Component {
                 <aside className="sideColumn">
                     <Card>
                         <CardFooter>
-                            <Popular/>
-                        </CardFooter>
-                        <CardFooter>
-                            <Latest/>
+                            <Popular history={this.props.history} loading={this.props.loading}/>
                         </CardFooter>
                     </Card>
                 </aside>

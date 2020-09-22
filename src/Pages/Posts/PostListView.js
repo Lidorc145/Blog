@@ -150,7 +150,7 @@ function MediaControlCard(props) {
                             </Button>
                             <Button size="small" color="primary"  onClick={handleClickOpenShare}>
                                 Share
-                            </Button>{console.log("kaka",props)}
+                            </Button>
                             {(props.full_name===props.auther || props.type==='admin')?(
                                 <Button size="small" color="primary" onClick={() => {  props.history.push("/Edit/Post/"+props.postID)  }}>
                                     Edit

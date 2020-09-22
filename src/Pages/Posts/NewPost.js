@@ -16,6 +16,16 @@ import PermissionCheck from "../../Accessories/PermissionCheck";
 import ReactHtmlParser from 'react-html-parser';
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Container from "@material-ui/core/Container";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Link from "@material-ui/core/Link";
+import HomeIcon from "@material-ui/icons/Home";
+import DescriptionSharpIcon from "@material-ui/icons/DescriptionSharp";
+import {makeStyles} from "@material-ui/core/styles";
+import EditSharpIcon from '@material-ui/icons/EditSharp';
+import AddSharpIcon from '@material-ui/icons/AddSharp';
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import CardMedia from "@material-ui/core/CardMedia";
 
 class NewPost extends React.Component {
     constructor(props) {
@@ -36,17 +46,17 @@ class NewPost extends React.Component {
             clicked: false
         };
         this.getPostData().then(this.setState({dataRecived: true}));
-        console.log("NewPost",this.state);
+        console.log("NewPost", this.state);
     }
 
     async getPostData() {
         if (this.state.editPostID != undefined) {
             let loadingID = this.props.loading.Start();
             await (axios.get(window.location.origin + '/posts/id/' + this.state.editPostID).then(res => {
-                if (res.data.length >0) {
-                    let tags=JSON.parse(res.data[1]);
+                if (res.data.length > 0) {
+                    let tags = JSON.parse(res.data[1]);
                     let tagsArray = [];
-                    for (let i = 0; i <tags.length ; i++) {
+                    for (let i = 0; i < tags.length; i++) {
                         tagsArray.push(tags[i].tag_name);
                     }
                     console.log(tagsArray);
@@ -127,7 +137,7 @@ class NewPost extends React.Component {
                         alertData: "Success: The post added successfully!",
                         alert: true
                     });
-                    this.props.history.push('/Post/'+res.data);
+                    this.props.history.push('/Post/' + res.data);
                 })
                 .catch((err) => {
                     this.props.parentSetState({
@@ -150,7 +160,7 @@ class NewPost extends React.Component {
         this.setState({clicked: true});
         let s = this.state;
         if (s.title && s.summary && s.content && s.image && s.publish_date) {
-            const url = "/posts/update/"+this.props.match.params.id;
+            const url = "/posts/update/" + this.props.match.params.id;
 
             var data = {
                 title: this.state.title,
@@ -174,7 +184,7 @@ class NewPost extends React.Component {
                         alertData: "Success: The post updated successfully!",
                         alert: true
                     });
-                    this.props.history.push('/Post/'+this.props.match.params.id);
+                    this.props.history.push('/Post/' + this.props.match.params.id);
                 })
                 .catch((err) => {
                     this.props.parentSetState({
@@ -194,7 +204,7 @@ class NewPost extends React.Component {
     }
 
     deletePost = () => {
-        const url = "/posts/delete/"+this.props.match.params.id;
+        const url = "/posts/delete/" + this.props.match.params.id;
 
         let loadingID = this.props.loading.Start();
         axios.get(url)
@@ -220,7 +230,6 @@ class NewPost extends React.Component {
     }
 
     render() {
-        console.log("papa",this.props);
         if (!this.props.logged || !PermissionCheck(this.props.type, "auther")) {
             this.props.parentSetState({
                 alert: true,
@@ -230,7 +239,7 @@ class NewPost extends React.Component {
             return (<Redirect to='/'/>);
         } else if (this.state.editPostID != null && !this.state.dataRecived) {
             return (<LinearProgress/>);
-        } else if (this.state.editPostID != null && (this.props.id != this.state.auther_id && this.props.type!='admin' )) {
+        } else if (this.state.editPostID != null && (this.props.id != this.state.auther_id && this.props.type != 'admin')) {
             this.props.parentSetState({
                 alert: true,
                 alertType: "error",
@@ -240,156 +249,214 @@ class NewPost extends React.Component {
 
         } else {
             return (
-                <Container>
-                <Card>
-                    <CardContent>
-                        <Typography variant="h4">
-                            <i className="material-icons md-35">create</i>
-                            {this.state.editPostID?"Edit Post":"New Post"}
-                        </Typography>
-                        <TextField
-                            error={this.state.clicked && !this.state.title}
-                            helperText={this.state.clicked && !this.state.title ? "Required" : null}
-                            variant="outlined"
-                            margin="dense"
-                            required
-                            fullWidth
-                            id="title"
-                            label="Title"
-                            name="title"
-                            autoComplete="off"
-                            onChange={this.handleInputChange}
-                            value={this.state.title}
-                        />
-                        <TextField
-                            error={this.state.clicked && !this.state.summary}
-                            helperText={this.state.clicked && !this.state.summary ? "Required" : null}
-                            variant="outlined"
-                            margin="dense"
-                            required
-                            fullWidth
-                            id="summary"
-                            label="Summary"
-                            name="summary"
-                            autoComplete="off"
-                            rows={4}
-                            rowsMax={4}
-                            onChange={this.handleInputChange}
-                            value={this.state.summary}
-                            multiline
-                        />
-                        <TextField
-                            error={this.state.clicked && !this.state.image}
-                            helperText={this.state.clicked && !this.state.image ? "Required" : null}
-                            variant="outlined"
-                            margin="dense"
-                            required
-                            fullWidth
-                            id="image"
-                            label="Image URL"
-                            name="image"
-                            autoComplete="off"
-                            value={this.state.image}
-                            onChange={this.handleInputChange}
-                        />
-                        <div style={this.state.clicked && !this.state.content ? {
-                            marginTop: 10,
-                            borderStyle: "solid",
-                            borderColor: "#f44336"
-                        } : {marginTop: 10}}>
-                            <Editor
-                                value={this.state.content}
-                                id="content"
-                                init={{
-                                    height: 500,
+                <Container justify="center">
+                    <IconBreadcrumbs isNew={this.state.editPostID}/>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h4">
+                                {this.state.editPostID ? "Edit Post" : "New Post"}
+                            </Typography>
+                                    <TextField
+                                        error={this.state.clicked && !this.state.title}
+                                        helperText={this.state.clicked && !this.state.title ? "Required" : null}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="title"
+                                        label="Title"
+                                        name="title"
+                                        autoComplete="off"
+                                        onChange={this.handleInputChange}
+                                        value={this.state.title}
+                                    />
+                                    <TextField
+                                        error={this.state.clicked && !this.state.summary}
+                                        helperText={this.state.clicked && !this.state.summary ? "Required" : null}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="summary"
+                                        label="Summary"
+                                        name="summary"
+                                        autoComplete="off"
+                                        rows={4}
+                                        rowsMax={4}
+                                        onChange={this.handleInputChange}
+                                        value={this.state.summary}
+                                        multiline
+                                    />
+                                    <TextField
+                                        error={this.state.clicked && !this.state.image}
+                                        helperText={this.state.clicked && !this.state.image ? "Required" : null}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="image"
+                                        label="Image URL"
+                                        name="image"
+                                        autoComplete="off"
+                                        value={this.state.image}
+                                        onChange={this.handleInputChange}/>
+                            <div style={this.state.clicked && !this.state.content ? {
+                                marginTop: 10,
+                                borderStyle: "solid",
+                                borderColor: "#f44336"
+                            } : {marginTop: 10}}>
+                                <Editor
+                                    value={this.state.content}
+                                    id="content"
+                                    init={{
+                                        height: 500,
 
-                                    menu: {
-                                        tc: {
-                                            title: 'TinyComments',
-                                            items: 'addcomment showcomments deleteallconversations'
-                                        }
-                                    },
-                                    menubar: 'file edit view insert format tools table tc help',
-                                    plugins: [
-                                        'advlist autolink lists link image',
-                                        'charmap print preview anchor help',
-                                        'searchreplace visualblocks code',
-                                        'insertdatetime media table paste wordcount fullscreen'
-                                    ],
-                                    allow_conditional_comments: true,
+                                        menu: {
+                                            tc: {
+                                                title: 'TinyComments',
+                                                items: 'addcomment showcomments deleteallconversations'
+                                            }
+                                        },
+                                        menubar: 'file edit view insert format tools table tc help',
+                                        plugins: [
+                                            'advlist autolink lists link image',
+                                            'charmap print preview anchor help',
+                                            'searchreplace visualblocks code',
+                                            'insertdatetime media table paste wordcount fullscreen'
+                                        ],
+                                        allow_conditional_comments: true,
 
-                                    toolbar:
-                                        'fullscreen  preview save print | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment'
-                                }}
-                                apiKey="xxvvg9qhyrakxs5x5duy04pgns9qrj0x8ph71t1d7q0qz4ju"
-                                onChange={this.handleInputChange}
-                            /></div>
+                                        toolbar:
+                                            'fullscreen  preview save print | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment'
+                                    }}
+                                    apiKey="xxvvg9qhyrakxs5x5duy04pgns9qrj0x8ph71t1d7q0qz4ju"
+                                    onChange={this.handleInputChange}
+                                /></div>
 
-                        <ChipInput
-                            value={this.state.tags}
-                            fullWidth
-                            variant="outlined"
-                            label="Tags"
-                            margin="normal"
-                            onAdd={(chip) => this.handleAddChip(chip)}
-                            onDelete={(chip, index) => this.handleDeleteChip(chip, index)}
-                        />
+                                   <ChipInput
+                                       value={this.state.tags}
+                                       fullWidth
+                                       variant="outlined"
+                                       label="Tags"
+                                       margin="normal"
+                                       onAdd={(chip) => this.handleAddChip(chip)}
+                                       onDelete={(chip, index) => this.handleDeleteChip(chip, index)}
+                                   />
+                                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                                        <DateTimePicker id="publish_date" required minutesStep={5} autoOk
+                                                        error={this.state.clicked && !this.state.publish_date}
+                                                        helperText={this.state.clicked && !this.state.publish_date ? "Required" : null}
+                                                        value={this.state.publish_date} inputVariant="outlined" disablePast
+                                                        allowKeyboardControl onChange={this.handlePublishDateChange}
+                                                        label="Publish Date" ampm={false}
+                                                        format="DD/MM/YYYY HH:mm:00"/>
+                                    </MuiPickersUtilsProvider>
 
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                            <DateTimePicker id="publish_date" required minutesStep={5} autoOk
-                                            error={this.state.clicked && !this.state.publish_date}
-                                            helperText={this.state.clicked && !this.state.publish_date ? "Required" : null}
-                                            value={this.state.publish_date} inputVariant="outlined" disablePast
-                                            allowKeyboardControl onChange={this.handlePublishDateChange}
-                                            label="Publish Date" ampm={false}
-                                            format="DD/MM/YYYY HH:mm:00"/>
-                        </MuiPickersUtilsProvider>
-
-                    </CardContent><CardActions>
-                    {((this.props.id == this.state.auther_id ||this.props.type=='admin')&&this.props.match.params.id!=undefined) ?
-                        (
-                            <React.Fragment><Button
-                                style={{
-                                    backgroundColor: "red",
-                                }}
-                                variant="contained"
-                                type="submit"
-                                fullWidth
-                                color="primary"
-                                onClick={this.deletePost}
-                            >
-                                Delete
-                            </Button>
-                            <Button
-                                style={{
-                                    backgroundColor: "green",
-                                }}
-                                variant="contained"
-                                type="submit"
-                                fullWidth
-                                color="primary"
-                                onClick={this.updatePost}
-                            >
-                                Save
-                            </Button>
-                            </React.Fragment>
-                        ) : (
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                onClick={this.sendPost}
-                            >
-                                Publish
-                            </Button>
-                        )}
-                </CardActions>
-                </Card>
+                        </CardContent><CardActions>
+                        {((this.props.id == this.state.auther_id || this.props.type == 'admin') && this.props.match.params.id != undefined) ?
+                            (
+                                <React.Fragment><Button
+                                    style={{
+                                        backgroundColor: "red",
+                                    }}
+                                    variant="contained"
+                                    type="submit"
+                                    fullWidth
+                                    color="primary"
+                                    onClick={this.deletePost}
+                                >
+                                    Delete
+                                </Button>
+                                    <Button
+                                        style={{
+                                            backgroundColor: "green",
+                                        }}
+                                        variant="contained"
+                                        type="submit"
+                                        fullWidth
+                                        color="primary"
+                                        onClick={this.updatePost}
+                                    >
+                                        Save
+                                    </Button>
+                                </React.Fragment>
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={this.sendPost}
+                                >
+                                    Publish
+                                </Button>
+                            )}
+                    </CardActions>
+                    </Card>
                 </Container>
             );
         }
     }
+}
+
+
+const useStyles = makeStyles((theme) => ({
+    link: {
+        display: 'flex',
+    },
+    icon: {
+        marginRight: theme.spacing(0.5),
+        width: 20,
+        height: 20,
+    },
+    root: {
+        maxWidth: 345,
+    },
+    media: {
+        height: 140,
+    }
+}));
+
+function IconBreadcrumbs(props) {
+    const classes = useStyles();
+    return (
+        <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/Home" className={classes.link}>
+                <HomeIcon className={classes.icon}/>
+                Blog System
+            </Link>
+            <Link color="inherit" href="/Home" className={classes.link}>
+                <DescriptionSharpIcon className={classes.icon}/>
+                Posts
+            </Link>
+            {props.isNew ? (
+                <Typography color="textPrimary" className={classes.link}>
+                    <EditSharpIcon className={classes.icon}/>
+                    Edit
+                </Typography>
+            ) : (
+                <Typography color="textPrimary" className={classes.link}>
+                    <AddSharpIcon className={classes.icon}/>
+                    New
+                </Typography>)}
+        </Breadcrumbs>
+    );
+}
+
+
+function MediaCard(props) {
+    const classes = useStyles();
+
+    return (
+        <Card className={classes.root}>
+            <CardMedia class
+                className={classes.media}
+                image={props.src}
+                title="Contemplative Reptile"
+            />
+
+        </Card>
+    );
 }
 
 export default NewPost;

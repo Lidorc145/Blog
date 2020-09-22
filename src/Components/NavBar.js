@@ -27,7 +27,10 @@ import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Tooltip from "@material-ui/core/Tooltip";
 import DialogSlideUP from "./DialogSlideUP";
 import Login from "../Pages/Login/Login";
-
+import MenuIcon from '@material-ui/icons/Menu';
+import SwipeableMenu from "./SwipeableMenu";
+import Button from "@material-ui/core/Button";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 
 function NavBar(props) {
     const classes = Styles.default()();
@@ -57,7 +60,7 @@ function NavBar(props) {
                     minHeight: "48px"
                 }
             },
-        }
+        },
     });
 
     const menuId = 'primary-search-account-menu';
@@ -76,26 +79,7 @@ function NavBar(props) {
         </Menu>
     );
 
-    function logout() {
-        let url = "../logout/";
-        axios.post(url)
-            .then((res) => {
-                props.parentSetState({
-                    alert: true,
-                    alertType: 'success',
-                    alertData: "You are logged out.",
-                    logged: false
-                });
-            })
-            .catch((err) => {
-                props.parentSetState({
-                    alert: true,
-                    alertType: 'error',
-                    alertData: ("Error login" + err),
-                    logged: false
-                });
-            });
-    }
+
 
     return (
         <div className={classes.grow}>
@@ -147,19 +131,24 @@ function NavBar(props) {
                 </Link><Toolbar className={classes.toolbarMobile}>
 
 
+
+
+
+
+
                     <div className={classes.grow}>
+                        <div className={classes.flex}>
+                        <SwipeableMenu logout={props.logout} history={props.history} logged={props.logged} full_name={props.full_name} parentSetState={props.parentSetState}/>
                         <div className={classes.toolbar}>
                             <Typography className={classes.toolbar} variant="h4" noWrap>
-                                <div className={classes.toolbar}><BookOutlinedIcon/> <Link href="/Home"
+                                <div className={classes.toolbar}><Link href="/Home"
                                                                                            style={{color: 'white'}}><b>BlogSystem</b></Link>
                                 </div>
                             </Typography>
                         </div>
-
+                        </div>
 
                         <div className={classes.toolbar}>   {showMobileUserMenu ? (<div>
-                                <div className={classes.toolbar}><LabelBottomNavigation {...props} /></div>
-
                                 <div className={classes.toolbar}>  {searchMenu()}</div>
                                 <div className={classes.toolbar}>   {userMenu()}</div>
                             </div>
@@ -168,28 +157,27 @@ function NavBar(props) {
                 </Toolbar>
                 </MobileView>
                 <BrowserView className={classes.flex}> <Toolbar>
+                    <SwipeableMenu  logout={props.logout} logged={props.logged} full_name={props.full_name} history={props.history} parentSetState={props.parentSetState}/>
                     <Typography variant="h4" noWrap>
-                        <BookOutlinedIcon/> <Link href="/Home" style={{color: 'white'}}><b>BlogSystem</b></Link>
+                        <Link href="/Home" style={{color: 'white'}}><b>BlogSystem</b></Link>
                         <div className={classes.grow}/>
                     </Typography>
                     <div className={classes.grow}/>
-                    <div className={classes.menubutton}>
-                        <LabelBottomNavigation {...props} />
-                    </div>
-                    {searchMenu()}
+                    {searchMenu(props)}
 
                     {userMenu()}  </Toolbar>
 
                 </BrowserView>
             </AppBar>
-            <DialogSlideUP {...props} open={props.dialog} dialog={props.dialog} dialogContent={(<Login {...props} />)} />
+            <DialogSlideUP {...props} open={props.dialog} dialog={props.dialog} dialogContent={(<Login  parentSetState={props.parentSetState} sessionCheck={props.sessionCheck} logged={props.logged} />)} />
         </div>
     );
 
-    function searchMenu() {
+    function searchMenu(props) {
+        let searchValue="";
         return (<div className={classes.search}>
             <div className={classes.searchIcon}>
-                <SearchIcon/>
+                <SearchIcon onClick={()=>props.history.push('/Search/'+searchValue)}/>
             </div>
             <InputBase
                 placeholder="Search…"
@@ -198,6 +186,11 @@ function NavBar(props) {
                     input: classes.inputInput,
                 }}
                 inputProps={{'aria-label': 'search'}}
+                onChange={(input)=>{searchValue=input.currentTarget.value}}
+                onKeyPress={(event) => {
+                    if(event.key === 'Enter'){
+                        props.history.push('/Search/'+searchValue);
+                    }}}
             />
         </div>);
     }
@@ -225,7 +218,7 @@ function NavBar(props) {
                 >
                     <AccountCircle/>
                 </IconButton>
-                <IconButton color="inherit" onClick={logout}>
+                <IconButton color="inherit" onClick={props.logout}>
                     <MeetingRoomIcon/>Logout</IconButton>
             </div>
         </div>) : (<div>
@@ -233,7 +226,7 @@ function NavBar(props) {
                             onClick={() => props.parentSetState({dialog: true})}>
                     <MeetingRoomIcon/>LOGIN</IconButton>
                 <IconButton color="inherit"
-                            onClick={() => props.history.push("../SignUp")}>
+                            onClick={() => props.history.push("/SignUp")}>
                     <PersonAddIcon/> SIGN UP</IconButton>
                 </div>
         )}</div>);
@@ -241,25 +234,7 @@ function NavBar(props) {
 }
 
 
-function LabelBottomNavigation(props) {
 
-    const testButton = (event, newValue) => {
-        props.parentSetState({alert: true, alertType: 'info', alertData: 'Test button..'})
-        console.info(props);
-    };
-
-    return (
-        <Typography variant="subtitle1" noWrap>
-            <NavLink to="/Home" className="inactive" activeClassName="active"> HOME </NavLink>
-            |<NavLink to="/AboutMe" className="inactive" activeClassName="active"> ABOUT ME </NavLink>
-            |<NavLink to="/NewPost" className="inactive" activeClassName="active"> NEW POST </NavLink>
-            |<NavLink to="/Tags" className="inactive" activeClassName="active"> TAGS </NavLink>
-            | <NavLink to={"/test"} className="inactive" activeClassName="active" onClick={testButton}>
-            TEST </NavLink>
-
-        </Typography>
-    );
-}
 
 
 export default NavBar;

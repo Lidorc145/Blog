@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import TextField from "@material-ui/core/TextField";
 
 function SignUp(props) {
+
     let usernameValid = false;
     let emailValid = false;
     const classes = Styles.default()();
@@ -23,8 +24,7 @@ function SignUp(props) {
             email: ''
         },
         onSubmit: async values => {
-
-            await (axios.get("../users/username/" + formik.values.username).then(res => {
+            await (axios.get("/users/username/" + formik.values.username).then(res => {
                 if (res.data.length !== 0) {
                     usernameValid = false;
                 } else {
@@ -32,22 +32,25 @@ function SignUp(props) {
                 }
 
             }));
-            await (axios.get("../users/email/" + formik.values.email).then(res => {
+            await (axios.get("/users/email/" + formik.values.email).then(res => {
                 if (res.data.length !== 0) {
                     emailValid = false;
                 } else {
                     emailValid = true;
                 }
             }));
-            await(formik.validateForm());
-            if(emailValid && usernameValid){
+
+            await (formik.validateForm());
+            if (emailValid && usernameValid) {
                 let a = JSON.parse(JSON.stringify(formik.values));
                 delete a['passwordConfirmation'];
-                await (axios.post("../register/", a).then(res => {
-                    props.history.push('./home');
+                await (axios.post("/register/", a).then(res => {
+                    props.history.push('/Home');
                     props.sessionCheck();
                 }));
+
             }
+
         },
         validationSchema: Yup.object({
             firstName: Yup.string()
@@ -75,7 +78,7 @@ function SignUp(props) {
                     "Cannot contain special characters or spaces"
                 )
                 .test("user Validation", "'${value}' already exist",
-                    async (value) => {
+                    (value) => {
                         return usernameValid;
                     }
                 ),
@@ -96,7 +99,7 @@ function SignUp(props) {
                 .email()
                 .required("Email required")
                 .test("Email Validation", "'${value}' already exist",
-                    async (value) => {
+                    (value) => {
                         return emailValid;
                     }
                 ),

@@ -12,35 +12,33 @@ import Link from "@material-ui/core/Link";
 import HomeIcon from "@material-ui/icons/Home";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import ViewListSharpIcon from '@material-ui/icons/ViewListSharp';
+import SearchIcon from '@material-ui/icons/Search';
+import FindInPageIcon from '@material-ui/icons/FindInPage';
 
-class TagsPostsList extends React.Component {
+class Search extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             postsData: [],
-            tagName: null
-        };;
-        this.getDataFromdb(this.props.tagID);
-        console.log(this.props.tagID);
+            value:  null
+        };
+        this.getDataFromdb();
     }
 
-
-
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if(this.props.tagID!==nextProps.tagID){ //page changes
-            this.getDataFromdb(nextProps.tagID);
+        if(this.props.value!==nextProps.value){ //page changes
+            this.setState({value: nextProps.value});
+            this.getDataFromdb(nextProps.value);
+            this.render();
         }
         return true;
     }
 
-    async getDataFromdb(tagID) {
+    async getDataFromdb() {
         let loadingID = this.props.loading.Start();
         this.setState({postsData: []});
-        await axios.get("/tags/id/" + tagID).then(res => {
-            if(res.data[0].tag_name !== undefined) {
-                this.setState({postsData: res.data, tagName: res.data[0].tag_name});
-                console.log(res.data[0].tag_name);
-            }
+        await axios.get("/search/" + this.props.value).then(res => {
+            this.setState({postsData: res.data, value: this.props.value});
         })
         this.props.loading.Stop(loadingID);
     }
@@ -48,19 +46,16 @@ class TagsPostsList extends React.Component {
     render() {
         if (this.state.postsData.length !== null) {
             let posts = this.state.postsData.map((item, key) => (
-                <PostListView {...this.state} {...this.props} key={this.props.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
+               <div>{console.log(item)} <PostListView  {...this.state} {...this.props} key={this.props.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
                               postPreviewText={item.summary} postImage={item.image} postAuther={item.auther_name}
-                              postPublishedTime={item.publish_date}/>
+                              postPublishedTime={item.publish_date}/></div>
             ));
             return (
 
-                <Container justify="center"> <IconBreadcrumbs tagName={this.state.tagName} />
+                <Container justify="center"> <IconBreadcrumbs search={this.state.value} />
                     <Card>
                         <CardContent>
-
-                    <ThemeProvider>
-                        <Typography variant={"h6"}>{this.state.tagName && (<div>'{this.state.tagName}' tags:</div>)} </Typography>
-                    </ThemeProvider>
+                                <Typography variant={"h6"}>{this.state.value && (<div>'{this.state.value}' Search:</div>)} </Typography>
                         </CardContent>
                     </Card>
                     {posts}
@@ -91,16 +86,16 @@ function IconBreadcrumbs(props) {
                 <HomeIcon className={classes.icon} />
                 Blog System
             </Link>
-            <Link color="inherit" href="/Tags" className={classes.link}>
-                <LocalOfferIcon className={classes.icon} />
-                Tags
+            <Link color="inherit" href="/Search" className={classes.link}>
+                <SearchIcon className={classes.icon} />
+                Search
             </Link>
             <Typography color="textPrimary" className={classes.link}>
-                <ViewListSharpIcon className={classes.icon} />
-                {props.tagName}
+                <FindInPageIcon className={classes.icon} />
+                {props.search}
             </Typography>
         </Breadcrumbs>
     );
 }
 
-export default TagsPostsList;
+export default Search;

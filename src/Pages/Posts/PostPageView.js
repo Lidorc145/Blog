@@ -11,6 +11,12 @@ import CardFooter from "reactstrap/es/CardFooter";
 import Button from "@material-ui/core/Button";
 import ShareDialog from "../../Components/ShareDialog";
 import Grid from "@material-ui/core/Grid";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Link from "@material-ui/core/Link";
+import HomeIcon from "@material-ui/icons/Home";
+import DescriptionSharpIcon from '@material-ui/icons/DescriptionSharp';
+import CardActions from "@material-ui/core/CardActions";
+import CommentsSection from "../../Components/Comments/CommentsSection";
 
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
@@ -43,6 +49,14 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: theme.spacing(1),
         paddingBottom: theme.spacing(1),
     },
+    link: {
+        display: 'flex',
+    },
+    icon: {
+        marginRight: theme.spacing(0.5),
+        width: 20,
+        height: 20,
+    }
 }));
 
 class PostPageView extends React.Component {
@@ -74,7 +88,7 @@ class PostPageView extends React.Component {
             let tagsList = this.state.postData[1];
             return (
                 <Container justify="center">
-                    <MediaControlCard history={this.props.history} {...postData} tags_list={tagsList} />
+                    <MediaControlCard parentSetState={this.parentSetState} postID={this.state.postID} history={this.props.history} {...postData} tags_list={tagsList} {...this.props} />
                 </Container>
             );
         }
@@ -113,6 +127,8 @@ function MediaControlCard(props) {
     };
 
     return (
+        <Container justify="center">
+            <IconBreadcrumbs postTitle={props.title} />
         <Card className={classes.root}>
 
             <div className={classes.details}>
@@ -121,7 +137,7 @@ function MediaControlCard(props) {
                         Share
                     </Button>
                     <ShareDialog open={openShare} onClose={handleCloseShare} {...props}  url={window.location.origin+"/Post/"+props.id}/>
-                    {(props.full_name===props.auther || props.type==='admin')?(
+                    {(props.fullName===props.auther_name || props.type==='admin')?(
                         <Button size="small" color="primary" onClick={() => {  props.history.push("/Edit/Post/"+props.id)  }}>
                             Edit
                         </Button>
@@ -137,19 +153,33 @@ function MediaControlCard(props) {
                         </Typography>
                         <ShowTagsList history={props.history} value={props.tags_list}/>
                     </CardContent>
+                    <img src={props.image} width={"100%"} />
                     {renderHTML(entities.decode(props.content))}
                 </CardBody>
                 <CardFooter>
                     Published <PublishDateCalc date={props.publish_date}/> by {props.auther_name}
                 </CardFooter>
             </div>
-            <CardMedia
-                className={classes.cover}
-                image={props.image}
-                title={props.title}
-            />
-
         </Card>
+            <br />
+            <CommentsSection postID={props.postID} loading={props.loading} parentSetState={props.parentSetState} />
+        </Container>
+    );
+}
+
+function IconBreadcrumbs(props) {
+    const classes = useStyles();
+    return (
+        <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/Home" className={classes.link}>
+                <HomeIcon className={classes.icon} />
+                Blog System
+            </Link>
+            <Typography color="textPrimary" className={classes.link}>
+                <DescriptionSharpIcon className={classes.icon} />
+                Posts
+            </Typography>
+        </Breadcrumbs>
     );
 }
 

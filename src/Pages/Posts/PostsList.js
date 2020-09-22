@@ -26,7 +26,7 @@ class PostsList extends React.Component {
     async getDataFromdb(page) {
         let loadingID = this.props.loading.Start();
         this.setState({postsData: []});
-        await axios.get("../posts/page/" + page).then(res => {
+        await axios.get("/posts/page/" + page).then(res => {
             this.setState({postsData: res.data});
         })
         this.props.loading.Stop(loadingID);
@@ -35,7 +35,7 @@ class PostsList extends React.Component {
     render() {
         if (this.state.postsData.length !== null) {
             return this.state.postsData.map((item, key) => (
-                <PostListView {...this.state} {...this.props} key={this.props.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
+                <PostListView item={item} {...this.state} {...this.props} key={this.props.page+"_"+key.toString()} postID={item.id} postTitle={item.title}
                               postPreviewText={item.summary} postImage={item.image} postAuther={item.auther_name}
                               postPublishedTime={item.publish_date}/>
             ));
