@@ -58,6 +58,7 @@ class CommentsSection extends React.Component {
 
 
     render(){
+        console.log(this.props);
         let listItems = (this.state.postComments!=null)?
             (this.state.postComments.map((item) => (<CommentView comment={item} {...this.props}/>))):null;
 
@@ -76,9 +77,10 @@ class CommentsSection extends React.Component {
 
                         </h5>
                     </div>
-                    <TextField required fullWidth value={this.state.newCommentContent} id="outlined-basic" variant="outlined" onChange={(target)=> this.setState({newCommentContent: target.currentTarget.value}) } onKeyDown={(e) => (e.keyCode == 13)? this.addComment(e): null}/>
 
-                    <Button style={{marginTop: '5px'}} variant={"outlined"} fullWidth color="primary" onClick={this.addComment}>
+                    <TextField required fullWidth disabled={!this.props.logged}  error={!this.props.logged} helperText={"Please login to comment"}  value={this.state.newCommentContent} id="outlined-basic" variant="outlined" onChange={(target)=> this.setState({newCommentContent: target.currentTarget.value}) } onKeyDown={(e) => (e.keyCode == 13)? this.addComment(e): null}/>
+
+                    <Button style={{marginTop: '5px'}} disabled={!this.props.logged} variant={"outlined"} fullWidth color="primary" onClick={this.addComment}>
                         Send
                     </Button>
                 </div>

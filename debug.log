@@ -8,3 +8,4 @@
 [0922/023525.510:ERROR:file_io.cc(90)] ReadExactly: expected 36, observed 0
 [0922/031155.530:ERROR:file_io.cc(90)] ReadExactly: expected 36, observed 0
 [0922/051525.257:ERROR:file_io.cc(90)] ReadExactly: expected 36, observed 0
+[0922/101317.907:ERROR:file_io.cc(90)] ReadExactly: expected 36, observed 0
