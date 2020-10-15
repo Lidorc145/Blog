@@ -2,15 +2,15 @@
 
 ![SDAD](Full%20Stack.jpg)
 
-####A Full Stack Project, post management system with an emphasis on user experience using:
+#### A Full Stack Project, post management system with an emphasis on user experience using:
 
-####React & Python & SQL & CSS & Material-UI
+#### React & Python & SQL & CSS & Material-UI
 
-####Aws Amazon (EC2, RDS, etc.) 
+#### Aws Amazon (EC2, RDS, etc.) 
 
-##[CLICK HERE FOR LIVE DEMO!](http://bit.ly/3crgiwF)
+## [CLICK HERE FOR LIVE DEMO!](http://bit.ly/3crgiwF)
 
-####Demo user: 
+#### Demo user: 
 * username: demo
 * password: demo
 
