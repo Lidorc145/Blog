@@ -8,7 +8,7 @@
 
 #### Aws Amazon (EC2, RDS, etc.) 
 
-## [CLICK HERE FOR LIVE DEMO!](http://bit.ly/3crgiwF)
+## [CLICK HERE FOR LIVE DEMO!](http://bit.ly/3dczKPp)
 
 #### Demo user: 
 * username: demo
